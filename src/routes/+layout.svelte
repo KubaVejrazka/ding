@@ -2,7 +2,7 @@
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.svg';
 
-	let { children } = $props();
+	let { children, data } = $props();
 
 	let sidebarOpen = $state(false);
 </script>
@@ -19,16 +19,21 @@
 </svelte:head>
 
 <header class="fixed flex h-14 w-full items-center border-b bg-white p-2">
-	<button
-		class="material-symbols-outlined mx-2 transition-transform hover:cursor-pointer {sidebarOpen
-			? 'rotate-180'
-			: 'rotate-0'}"
-		onclick={() => (sidebarOpen = !sidebarOpen)}>side_navigation</button
+	{#if data.user}
+		<button
+			class="material-symbols-outlined mx-2 transition-transform hover:cursor-pointer {sidebarOpen
+				? 'rotate-180'
+				: 'rotate-0'}"
+			onclick={() => (sidebarOpen = !sidebarOpen)}>side_navigation</button
+		>
+	{/if}
+	<a
+		class="absolute left-1/2 flex -translate-x-1/2 items-center font-2 text-lg font-semibold"
+		href="/"
 	>
-	<h3 class="absolute left-1/2 flex -translate-x-1/2 items-center font-2 text-lg font-semibold">
 		<span class="material-symbols-outlined">forum</span>
 		Ding
-	</h3>
+	</a>
 </header>
 <div class="h-14"></div>
 
@@ -37,6 +42,9 @@
 		? 'border-r'
 		: '-translate-x-64'}"
 >
+	<form action="/?/signOut" method="POST">
+		<button>signout</button>
+	</form>
 	<div class="mb-4 h-16 w-full border"></div>
 	<div class="mb-4 h-16 w-full border"></div>
 	<div class="mb-4 h-16 w-full border"></div>
