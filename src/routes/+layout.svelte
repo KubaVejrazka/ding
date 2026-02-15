@@ -74,7 +74,7 @@
 				</form>
 			{/if}
 		</div>
-		<div class="w-full grow border"></div>
+		<div class="w-full grow border bg-red-100"></div>
 	</div>
 {/if}
 

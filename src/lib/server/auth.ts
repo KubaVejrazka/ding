@@ -17,6 +17,11 @@ export const auth = betterAuth({
         required: true,
         unique: true
       },
+      groupId: {
+        type: "string",
+        required: false,
+        input: false
+      }
     },
   },
   plugins: [sveltekitCookies(getRequestEvent)] // make sure this is the last plugin in the array
