@@ -5,6 +5,7 @@
 	let { children, data } = $props();
 
 	let sidebarOpen = $state(false);
+	let showPersonalData = $state(false);
 </script>
 
 <svelte:head>
@@ -37,17 +38,44 @@
 </header>
 <div class="h-14"></div>
 
-<div
-	class="fixed top-14 bottom-0 z-10 w-64 bg-white p-4 transition-transform {sidebarOpen
-		? 'border-r'
-		: '-translate-x-64'}"
->
-	<form action="/?/signOut" method="POST">
-		<button>signout</button>
-	</form>
-	<div class="mb-4 h-16 w-full border"></div>
-	<div class="mb-4 h-16 w-full border"></div>
-	<div class="mb-4 h-16 w-full border"></div>
-</div>
+{#if data.user}
+	<div
+		class="fixed top-14 bottom-0 z-10 flex w-64 flex-col items-center bg-white p-4 transition-transform {sidebarOpen
+			? 'border-r'
+			: '-translate-x-64'}"
+	>
+		<div class="flex w-full items-center justify-center">
+			<h4 class="font-2 font-semibold">
+				{data.user.name}
+			</h4>
+			<button
+				onclick={() => (showPersonalData = !showPersonalData)}
+				class="material-symbols-outlined ml-2 transition-transform hover:cursor-pointer {showPersonalData
+					? 'rotate-180'
+					: 'rotate-0'}">keyboard_arrow_down</button
+			>
+		</div>
+		<div
+			class="mb-4 flex w-full flex-col items-center transition-transform {showPersonalData
+				? 'scale-y-100'
+				: 'scale-y-0'}"
+		>
+			{#if showPersonalData}
+				<h4 class="text-center text-sm">{data.user.email}</h4>
+				<h4 class="mb-4 text-center text-sm">+420{data.user.phone}</h4>
+
+				<form action="/?/signOut" method="POST">
+					<button
+						class="flex items-center justify-center border bg-black p-2 text-white transition-colors hover:cursor-pointer hover:bg-white hover:text-black"
+					>
+						<span class="material-symbols-outlined mr-2">logout</span>
+						Odhlásit se
+					</button>
+				</form>
+			{/if}
+		</div>
+		<div class="w-full grow border"></div>
+	</div>
+{/if}
 
 {@render children()}

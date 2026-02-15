@@ -15,6 +15,7 @@ export const auth = betterAuth({
       phone: {
         type: "string",
         required: true,
+        unique: true
       },
     },
   },

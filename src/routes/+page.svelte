@@ -8,16 +8,29 @@
 		if (code == undefined) return '';
 		switch (code) {
 			case 'INVALID_EMAIL':
-				return 'Neplatný email';
+				return 'Neplatný email.';
 			case 'INVALID_EMAIL_OR_PASSWORD':
 				return 'Špatný email nebo heslo.';
+			case 'USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL':
+				return 'Uživatel s tímto emailem už existuje.';
+			case 'PASSWORD_TOO_SHORT':
+				return 'Heslo je moc krátké.';
+			case 'FAILED_TO_CREATE_USER':
+				return 'Něco se nepovedlo. Ujistěte se, že toto telefonní číslo ještě není zaregistrované.';
 			default:
-				return 'Něco se pokazilo :(';
+				console.log(code);
+				return 'Něco se nepovedlo :(';
 		}
 	}
 
 	let existingUser = $state(false);
 	let errorMessage = $derived(getErrorMessage(form?.code));
+
+	let phoneValue = $state('');
+	function updatePhoneValue() {
+		if (phoneValue[phoneValue.length - 1] < '0' || phoneValue[phoneValue.length - 1] > '9')
+			phoneValue = phoneValue.slice(0, -1);
+	}
 </script>
 
 <div class="flex">
@@ -85,7 +98,10 @@
 								<div class="flex items-center">
 									<h4>+420</h4>
 									<input
+										bind:value={phoneValue}
+										oninput={updatePhoneValue}
 										type="tel"
+										maxlength="9"
 										name="phone"
 										class="ml-2 h-8 grow rounded-none border bg-gray-100 p-1"
 									/>

@@ -13,8 +13,9 @@ export const actions: Actions = {
     await auth.api.signOut({
       headers: event.request.headers
     });
-    return redirect(302, '/');
+    return {};
   },
+
   signIn: async (event) => {
     const formData = await event.request.formData();
     const email = formData.get('email')?.toString() ?? '';
@@ -30,7 +31,34 @@ export const actions: Actions = {
       });
     } catch (error) {
       if (error instanceof APIError) {
-        return fail(400, { code: error.body?.code });
+        return fail(400, { code: error.body?.code || 'UNKNOWN' });
+      }
+      return fail(500, { code: 'UNKNOWN' });
+    }
+
+    return redirect(302, '/dashboard');
+  },
+
+  signUp: async (event) => {
+    const formData = await event.request.formData();
+    const email = formData.get('email')?.toString() ?? '';
+    const phone = formData.get('phone')?.toString() ?? '';
+    const password = formData.get('password')?.toString() ?? '';
+    const name = formData.get('name')?.toString() ?? '';
+
+    try {
+      await auth.api.signUpEmail({
+        body: {
+          email,
+          phone,
+          password,
+          name,
+          callbackURL: '/auth/verification-success'
+        }
+      });
+    } catch (error) {
+      if (error instanceof APIError) {
+        return fail(400, { code: error.body?.code || 'UNKNOWN' });
       }
       return fail(500, { code: 'UNKNOWN' });
     }
