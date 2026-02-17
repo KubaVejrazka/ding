@@ -25,8 +25,7 @@ export const actions: Actions = {
       await auth.api.signInEmail({
         body: {
           email,
-          password,
-          callbackURL: '/auth/verification-success'
+          password
         }
       });
     } catch (error) {
@@ -53,9 +52,10 @@ export const actions: Actions = {
           phone,
           password,
           name,
-          callbackURL: '/auth/verification-success'
+          callbackURL: '/dashboard'
         }
       });
+      console.log("User " + name + " (" + email + ") just signed up!")
     } catch (error) {
       if (error instanceof APIError) {
         return fail(400, { code: error.body?.code || 'UNKNOWN' });
@@ -63,6 +63,6 @@ export const actions: Actions = {
       return fail(500, { code: 'UNKNOWN' });
     }
 
-    return redirect(302, '/dashboard');
+    return redirect(302, '/verify');
   }
 };
