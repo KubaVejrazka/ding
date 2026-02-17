@@ -18,9 +18,11 @@ jobs:
         port: 22
         script: |
           cd /home/${{ secrets.USERNAME }}/ding
-          git pull origin main
 
+          pm2 stop ding
+
+          git pull origin main
           npm install
           npm run build
 
-          pm2 restart ding
+          pm2 start ding
