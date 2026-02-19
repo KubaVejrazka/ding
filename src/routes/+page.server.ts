@@ -30,10 +30,10 @@ export const actions: Actions = {
       });
     } catch (error) {
       if (error instanceof APIError) {
-        console.log(error)
+        console.error("DURING LOGIN: " + error)
         return fail(400, { code: error.body?.code || 'UNKNOWN' });
       }
-      console.log(error)
+      console.error("DURING LOGIN: " + error)
       return fail(500, { code: 'UNKNOWN' });
     }
 
@@ -60,8 +60,10 @@ export const actions: Actions = {
       console.log("User " + name + " (" + email + ") just signed up!")
     } catch (error) {
       if (error instanceof APIError) {
+        console.error("DURING SIGNUP: " + error)
         return fail(400, { code: error.body?.code || 'UNKNOWN' });
       }
+      console.error("DURING SIGNUP: " + error)
       return fail(500, { code: 'UNKNOWN' });
     }
 
