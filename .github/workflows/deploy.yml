@@ -11,11 +11,14 @@ jobs:
     steps:
     - name: Deploy via SSH
       uses: appleboy/ssh-action@v1.0.3
+      env:
+        RESET_DB: ${{ vars.RESET_DB }}
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.SSH_KEY }}
         port: 22
+        envs: RESET_DB
         script: |
           cd /home/${{ secrets.USERNAME }}/ding
 
@@ -23,6 +26,13 @@ jobs:
 
           git reset --hard
           git pull origin main
+
+          if [ "$RESET_DB" = "true" ]; then
+            echo "CLEARING THE DATABASE"
+            echo "" > ./prod.db
+            npm run db:push
+          fi
+
           npm install
           npm run build
 
