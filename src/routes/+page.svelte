@@ -100,7 +100,7 @@
 						{#if !existingUser}
 							<input
 								type="password"
-								name="confirmPassword"
+								name="passwordConfirmation"
 								class="h-8 rounded-none border bg-gray-100 p-1 placeholder:text-xs placeholder:text-gray-500"
 								placeholder="Heslo znovu"
 							/>
