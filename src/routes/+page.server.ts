@@ -30,8 +30,10 @@ export const actions: Actions = {
       });
     } catch (error) {
       if (error instanceof APIError) {
+        console.log(error)
         return fail(400, { code: error.body?.code || 'UNKNOWN' });
       }
+      console.log(error)
       return fail(500, { code: 'UNKNOWN' });
     }
 
