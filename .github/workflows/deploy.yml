@@ -30,7 +30,7 @@ jobs:
           if [ "$RESET_DB" = "true" ]; then
             echo "CLEARING THE DATABASE"
             echo "" > ./prod.db
-            npm run db:push
+            npm run db:push -- --force
           fi
 
           npm install
