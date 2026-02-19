@@ -19,7 +19,7 @@ export const actions: Actions = {
           "flow": [
             {
               "sms": {
-                "body": "Tesovaci zprava poslana z webappky",
+                "body": "Mnau",
                 "gateway": "direct",
                 "sender": env.SMS_SENDER
               }
