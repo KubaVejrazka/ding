@@ -58,41 +58,39 @@
 			</h3>
 
 			<form use:enhance action="?/{existingUser ? 'signIn' : 'signUp'}" method="POST">
-				<label for="email" class="text-sm">Email:</label><br />
-				<div class="mb-2 flex items-center">
+				<label for="email" class="text-sm font-semibold">Email:</label><br />
+				<div class="mb-4 flex items-center">
 					<input type="email" name="email" class="h-8 grow rounded-none border bg-gray-100 p-1" />
 					<span class="material-symbols-outlined w-10 text-end">email</span>
 				</div>
 
 				{#if !existingUser}
-					<label for="phone" class="text-sm">Telefon:</label><br />
+					<label for="phone" class="text-sm font-semibold">Telefon:</label><br />
 					<div class="mb-1 flex items-center">
-						<span>+420</span>
-						<input
-							type="tel"
-							name="phone"
-							class="ml-2 h-8 grow rounded-none border bg-gray-100 p-1"
-						/>
+						<span class="flex h-8 items-center border border-r-0 bg-gray-100 px-2 text-sm"
+							>+420</span
+						>
+						<input type="tel" name="phone" class="h-8 grow rounded-none border bg-gray-100 p-1" />
 						<span class="material-symbols-outlined w-10 text-end">phone</span>
 					</div>
 
-					<p class="mb-2 text-xs text-gray-500">
+					<p class="mb-4 text-xs text-gray-500">
 						Služba je momentálně dostupná pouze pro uživatele s českým telefonním číslem.
 					</p>
 
-					<label for="name" class="text-sm">Přezdívka:</label><br />
+					<label for="name" class="text-sm font-semibold">Přezdívka:</label><br />
 					<div class="mb-1 flex items-center">
 						<input type="text" name="name" class="h-8 grow rounded-none border bg-gray-100 p-1" />
 						<span class="material-symbols-outlined w-10 text-end">badge</span>
 					</div>
 
-					<p class="mb-2 text-xs text-gray-500">
+					<p class="mb-4 text-xs text-gray-500">
 						Pod tímto jménem vás uvidí vaši blízcí ve zprávách. Můžete ho kdykoliv změnit.
 					</p>
 				{/if}
 
-				<label for="password" class="text-sm">Heslo:</label><br />
-				<div class="mb-2 flex items-center">
+				<label for="password" class="text-sm font-semibold">Heslo:</label><br />
+				<div class="mb-4 flex items-center">
 					<div class="flex grow flex-col gap-2">
 						<input
 							type="password"

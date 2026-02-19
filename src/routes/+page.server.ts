@@ -54,7 +54,7 @@ export const actions: Actions = {
       await auth.api.signUpEmail({
         body: {
           email,
-          phone,
+          phone: "420" + phone,
           password,
           name,
           callbackURL: '/dashboard'
