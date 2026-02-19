@@ -15,8 +15,6 @@
 		href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@300"
 		rel="stylesheet"
 	/>
-
-	<title>Ding</title>
 </svelte:head>
 
 <header class="fixed flex h-14 w-full items-center border-b bg-white p-2">
@@ -56,17 +54,17 @@
 			>
 		</div>
 		<div
-			class="mb-4 flex w-full flex-col items-center transition-transform {showPersonalData
+			class="my-2 flex w-full flex-col items-center transition-transform {showPersonalData
 				? 'scale-y-100'
 				: 'scale-y-0'}"
 		>
 			{#if showPersonalData}
 				<h4 class="text-center text-sm">{data.user.email}</h4>
-				<h4 class="mb-4 text-center text-sm">+420{data.user.phone}</h4>
+				<h4 class="text-center text-sm">+420{data.user.phone}</h4>
 
 				<form action="/?/signOut" method="POST">
 					<button
-						class="flex items-center justify-center border bg-black p-2 text-white transition-colors hover:cursor-pointer hover:bg-white hover:text-black"
+						class="mt-2 mb-2 flex items-center justify-center border bg-black p-2 font-2 font-semibold text-white transition-colors hover:cursor-pointer hover:bg-white hover:text-black"
 					>
 						<span class="material-symbols-outlined mr-2">logout</span>
 						Odhlásit se
