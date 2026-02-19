@@ -45,7 +45,10 @@ export const actions: Actions = {
     const email = formData.get('email')?.toString() ?? '';
     const phone = formData.get('phone')?.toString() ?? '';
     const password = formData.get('password')?.toString() ?? '';
+    const passwordConfirmation = formData.get('passwordConfirmation')?.toString() ?? '';
     const name = formData.get('name')?.toString() ?? '';
+
+    if (passwordConfirmation !== password) return fail(400, { code: 'PASSWORD_MISMATCH' });
 
     try {
       await auth.api.signUpEmail({
