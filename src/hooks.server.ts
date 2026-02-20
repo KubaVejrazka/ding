@@ -14,13 +14,13 @@ const handleBetterAuth: Handle = async ({ event, resolve }) => {
   if (
     !event.locals.user &&
     event.url.pathname !== '/' &&
-    !event.url.pathname.startsWith('/api/auth')
+    !event.url.pathname.startsWith('/api')
   ) return redirect(302, '/');
   else if (
     event.url.pathname !== '/' &&
     event.url.pathname !== '/verify' &&
     !event.locals.user?.emailVerified &&
-    !event.url.pathname.startsWith('/api/auth')
+    !event.url.pathname.startsWith('/api')
   ) return redirect(302, '/verify')
 
   return svelteKitHandler({ event, resolve, auth, building });
