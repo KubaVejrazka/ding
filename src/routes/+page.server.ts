@@ -49,7 +49,8 @@ export const actions: Actions = {
     const name = formData.get('name')?.toString() ?? '';
 
     if (passwordConfirmation !== password) return fail(400, { code: 'PASSWORD_MISMATCH' });
-    if (!(/^[\x00-\x7F]*$/.test(name)) || name.length > 15) return fail(400, { code: 'INVALID_USERNAME' })
+    if (!(/^[a-zA-Z0-9_-]{1,15}$/.test(name))) return fail(400, { code: 'INVALID_USERNAME' });
+    if (!(/^[0-9]{9}$/.test(phone))) return fail(400, { code: 'INVALID_PHONE' });
 
     try {
       await auth.api.signUpEmail({

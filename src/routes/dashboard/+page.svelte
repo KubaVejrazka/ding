@@ -53,9 +53,12 @@
 	<div class="h-min border bg-white p-4">
 		{#if !data.user?.welcomeMessageSent}
 			<h2 class="mb-8 font-2 text-2xl font-semibold">Vytvořte si kontakt</h2>
-			<p>Zkontrolujte si, že toto je vaše primární telefonní číslo:</p>
+			<p>
+				Poslední krok, než budete moci začít využívat SMS skupiny, je ověření telefonního čísla a
+				funkční obousměrné komunikace. Zkontrolujte si, že toto je vaše primární telefonní číslo:
+			</p>
 			<h2 class="mb-8 text-2xl font-semibold">{phoneString}</h2>
-			<p class="mb-8 text-sm">
+			<p class="mb-8">
 				Jakmile si necháte poslat přivítací SMS, už ho <span class="font-semibold text-red-400"
 					>nebudete moci změnit</span
 				>.
@@ -83,37 +86,40 @@
 			</form>
 
 			{#if errorMessage}
-				<p class="mt-8 text-center text-sm text-red-400">
+				<p class="mt-8 text-center text-red-400">
 					{errorMessage}
 				</p>
 			{/if}
 
-			<p class="mt-8 text-sm">
-				Číslo je špatně? <button class="text-start text-red-400 underline hover:cursor-pointer"
-					>Klikněte sem a opravte ho.</button
+			<p class="mt-8">
+				Číslo je špatně? <a
+					href="/dashboard/fixNumber"
+					class="text-start text-red-400 underline hover:cursor-pointer"
+					>Klikněte sem a opravte ho.</a
 				>
 			</p>
 		{:else if !data.user.latestMessage}
 			<h2 class="mb-8 font-2 text-2xl font-semibold">Pošlete svou první zprávu</h2>
-			<p class="text-sm">
+			<p>
 				Měli byste za chvíli dostat přivítací SMS. Pokud do několika minut nedorazí, prosím, <a
 					href="mailto:jakvejr@gmail.com"
 					class="text-red-400 underline">kontaktujte vývojáře.</a
 				>
 				<br />
 				<br />
-				Pokud zpráva dorazila, odpovězte na ni (např. "odpoved" nebo něco podobného).
+				Pokud zpráva dorazila, uložte si kontakt odesílatele a odpovězte na ni (např. "odpoved" nebo něco
+				podobného).
 				<span class="font-semibold"
 					>Odpověď na přivítací zprávu ani žádná jiná zpráva poslaná na Ding NESMÍ:</span
 				>
 			</p>
-			<ol class="ml-4 list-inside list-decimal text-sm">
+			<ol class="mt-2 ml-4 list-inside list-decimal">
 				<li>Obsahovat speciální znaky (á,č,ř atd.)</li>
 				<li>Obsahovat odstavce nebo prázdné řádky</li>
 				<li>Být delší než 140 znaků</li>
 			</ol>
 			<br />
-			<p class="text-sm">
+			<p>
 				Jakákoliv zpráva, která nesplní tyto podmínky, nebude doručena. Na stránce <a
 					href="/"
 					class="text-red-400 underline">poslední doručená SMS</a
@@ -159,25 +165,25 @@
 			{/if}
 
 			{#if errorMessage}
-				<p class="mt-8 text-center text-sm text-red-400">
+				<p class="mt-8 text-center text-red-400">
 					{errorMessage}
 				</p>
 			{/if}
 		{:else}
 			<h2 class="mb-8 font-2 text-2xl font-semibold">Moje skupina</h2>
 			{#if !data.user.groupId}
-				<p class="text-sm">
+				<p>
 					Momentálně nejste v žádné skupině. Můžete buď vytvořit novou, nebo se přidat do
 					existující. Pro přidání do existující skupiny musíte požádat jejího autora, aby vám poslal
 					pozvánku.
 				</p>
-				<p class="mt-8 text-center text-sm text-red-400">Work in progress</p>
+				<p class="mt-8 text-center text-red-400">Work in progress</p>
 			{/if}
 		{/if}
 	</div>
 	<div class="h-min border bg-white p-4">
-		<h2 class="mb-8 font-2 text-2xl font-semibold">Dobijte si kredit</h2>
-		<p class="mb-8 text-sm">
+		<h2 class="mb-8 font-2 text-2xl font-semibold">Váš kredit</h2>
+		<p class="mb-8">
 			Na začátek máte zkušební kredit 10 Kč (5 zpráv), pak je potřeba si dobíjet kredit dopředu.
 			Cena za každou odeslanou zprávu je 2 Kč, tzn. pokud píšete do skupiny, kde jsou kromě vás 3
 			další lidé, platíte za každou zprávu 6 Kč (3×2).
@@ -187,7 +193,7 @@
 
 		<button class="mt-8 h-12 w-full border bg-red-50">Dobít kredit</button>
 
-		<p class="mt-8 text-center text-sm text-red-400">
+		<p class="mt-8 text-center text-red-400">
 			Služba je v testovacím režimu a kredit momentálně nelze dobíjet. Administrátoři a ověření
 			testeři ale můžou do mínusu :)
 		</p>

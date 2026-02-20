@@ -1,11 +1,25 @@
 <script lang="ts">
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.svg';
+	import { onMount } from 'svelte';
 
 	let { children, data } = $props();
 
 	let sidebarOpen = $state(false);
 	let showPersonalData = $state(false);
+
+	let phoneString = $state('');
+	onMount(() => {
+		phoneString =
+			'+' +
+			data.user!.phone.slice(0, 3) +
+			' ' +
+			data.user!.phone.slice(3, 6) +
+			' ' +
+			data.user!.phone.slice(6, 9) +
+			' ' +
+			data.user!.phone.slice(9, 12);
+	});
 </script>
 
 <svelte:head>
@@ -60,7 +74,7 @@
 		>
 			{#if showPersonalData}
 				<h4 class="text-center text-sm">{data.user.email}</h4>
-				<h4 class="text-center text-sm">+420{data.user.phone}</h4>
+				<h4 class="text-center text-sm">{phoneString}</h4>
 
 				<form action="/?/signOut" method="POST">
 					<button

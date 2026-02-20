@@ -9,6 +9,8 @@
 		switch (code) {
 			case 'INVALID_EMAIL':
 				return 'Neplatný email.';
+			case 'INVALID_PHONE':
+				return 'Neplatné telefonní číslo.';
 			case 'INVALID_USERNAME':
 				return 'Neplatná přezdívka.';
 			case 'INVALID_EMAIL_OR_PASSWORD':
@@ -40,14 +42,14 @@
 <div class="m-4 grid grow grid-cols-1 gap-4 lg:grid-cols-2">
 	<div class="h-min border bg-white p-4">
 		<h1 class="mb-8 font-2 text-4xl font-semibold">Groupchaty i bez internetu.</h1>
-		<p class="mb-8 text-justify text-sm">
+		<p class="mb-8 text-justify">
 			Ding je platforma, která přináší svět skupinových konverzací do klasických SMS zpráv. Je
 			určena primárně uživatelům tlačítkových telefonů, na kterých si WhatsApp nebo podobnou
 			aplikaci zkrátka nestáhnete. Ding vám umožňuje zůstat v kontaktu i bez přístupu k internetu a
 			platíte jen za zprávy, které odešlete.
 		</p>
 		<img src="/img.svg" alt="" class="mx-auto w-full md:w-2/3" />
-		<p class="mt-8 text-justify text-sm">
+		<p class="mt-8 text-justify">
 			Ding je ideální volbou např. pro organizování rodinných sešlostí, komunikaci s blízkými z míst
 			bez internetu, nebo třeba pro rodinnou skupinu s malými dětmi, které ještě nemají na internetu
 			co dělat.
@@ -60,23 +62,21 @@
 			</h2>
 
 			<form use:enhance action="?/{existingUser ? 'signIn' : 'signUp'}" method="POST">
-				<label for="email" class="text-sm font-semibold">Email:</label><br />
+				<label for="email" class="font-semibold">Email:</label><br />
 				<div class="mb-4 flex items-center">
 					<input
 						type="email"
 						name="email"
 						placeholder="jan.novak@email.cz"
-						class="h-8 grow rounded-none border bg-gray-100 p-1 placeholder:text-xs placeholder:text-gray-500"
+						class="h-8 grow rounded-none border bg-gray-100 px-2 py-1 placeholder:text-xs placeholder:text-gray-500"
 					/>
 					<span class="material-symbols-outlined w-10 text-end">email</span>
 				</div>
 
 				{#if !existingUser}
-					<label for="phone" class="text-sm font-semibold">Telefon:</label><br />
+					<label for="phone" class="font-semibold">Telefon:</label><br />
 					<div class="mb-1 flex items-center">
-						<span class="flex h-8 items-center border border-r-0 bg-gray-100 px-2 text-sm"
-							>+420</span
-						>
+						<span class="flex h-8 items-center border border-r-0 bg-gray-100 px-2">+420</span>
 						<input
 							type="tel"
 							name="phone"
@@ -84,46 +84,46 @@
 							oninput={updatePhoneValue}
 							maxlength="9"
 							placeholder="765 432 111"
-							class="h-8 grow rounded-none border bg-gray-100 p-1 placeholder:text-xs placeholder:text-gray-500"
+							class="h-8 grow rounded-none border bg-gray-100 px-2 py-1 placeholder:text-xs placeholder:text-gray-500"
 						/>
 						<span class="material-symbols-outlined w-10 text-end">phone</span>
 					</div>
 
-					<p class="mb-4 pr-10 text-center text-xs text-gray-500">
+					<p class="mb-4 pr-10 text-center text-sm text-gray-500">
 						Služba je momentálně dostupná pouze pro uživatele s českým telefonním číslem.
 					</p>
 
-					<label for="name" class="text-sm font-semibold">Přezdívka:</label><br />
+					<label for="name" class="font-semibold">Přezdívka:</label><br />
 					<div class="mb-1 flex items-center">
 						<input
 							type="text"
 							name="name"
 							maxlength="15"
 							placeholder="Honza Novak"
-							class="h-8 grow rounded-none border bg-gray-100 p-1 placeholder:text-xs placeholder:text-gray-500"
+							class="h-8 grow rounded-none border bg-gray-100 px-2 py-1 placeholder:text-xs placeholder:text-gray-500"
 						/>
 						<span class="material-symbols-outlined w-10 text-end">badge</span>
 					</div>
 
-					<p class="mb-4 pr-10 text-center text-xs text-gray-500">
+					<p class="mb-4 pr-10 text-center text-sm text-gray-500">
 						Přezdívka nesmí obsahovat žádné speciální znaky (á,č,ř atd.).
 					</p>
 				{/if}
 
-				<label for="password" class="text-sm font-semibold">Heslo:</label><br />
+				<label for="password" class="font-semibold">Heslo:</label><br />
 				<div class="mb-4 flex items-center">
 					<div class="flex grow flex-col gap-2">
 						<input
 							type="password"
 							name="password"
-							class="h-8 rounded-none border bg-gray-100 p-1 placeholder:text-xs placeholder:text-gray-500"
+							class="h-8 rounded-none border bg-gray-100 px-2 py-1 placeholder:text-xs placeholder:text-gray-500"
 							placeholder="Zadejte heslo"
 						/>
 						{#if !existingUser}
 							<input
 								type="password"
 								name="passwordConfirmation"
-								class="h-8 rounded-none border bg-gray-100 p-1 placeholder:text-xs placeholder:text-gray-500"
+								class="h-8 rounded-none border bg-gray-100 px-2 py-1 placeholder:text-xs placeholder:text-gray-500"
 								placeholder="Zadejte heslo znovu"
 							/>
 						{/if}
@@ -131,7 +131,7 @@
 					<span class="material-symbols-outlined w-10 text-end">key_vertical</span>
 				</div>
 				{#if errorMessage}
-					<p class="mt-8 text-center text-sm text-red-400">
+					<p class="mt-8 text-center text-red-400">
 						{errorMessage}
 					</p>
 				{/if}
@@ -142,7 +142,7 @@
 				>
 			</form>
 
-			<h4 class="mt-4 text-center text-sm">
+			<h4 class="mt-4 text-center">
 				{existingUser ? 'Jste tu noví?' : 'Už máte účet?'}
 				<button
 					class="text-red-400 underline hover:cursor-pointer"
@@ -156,7 +156,7 @@
 		</div>
 		<div class="border bg-white p-4">
 			<h2 class="mb-8 font-2 text-2xl font-semibold">Jak to funguje?</h2>
-			<p class="text-justify text-sm">
+			<p class="text-justify">
 				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam cursus aliquam risus et
 				malesuada. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus
 				mus. Nunc luctus urna vel ex posuere dignissim. Donec elementum pharetra volutpat. Nulla
