@@ -10,15 +10,17 @@
 
 	let phoneString = $state('');
 	onMount(() => {
-		phoneString =
-			'+' +
-			data.user!.phone.slice(0, 3) +
-			' ' +
-			data.user!.phone.slice(3, 6) +
-			' ' +
-			data.user!.phone.slice(6, 9) +
-			' ' +
-			data.user!.phone.slice(9, 12);
+		if (data.user) {
+			phoneString =
+				'+' +
+				data.user!.phone.slice(0, 3) +
+				' ' +
+				data.user!.phone.slice(3, 6) +
+				' ' +
+				data.user!.phone.slice(6, 9) +
+				' ' +
+				data.user!.phone.slice(9, 12);
+		}
 	});
 </script>
 
