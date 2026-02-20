@@ -26,6 +26,11 @@ export const user = sqliteTable("user", {
     .notNull(),
   phone: text("phone").notNull().unique(),
   groupId: text("group_id").references((): any => groups.id),
+  welcomeMessageSent: integer("welcome_message_sent", { mode: "boolean" })
+    .default(false)
+    .notNull(),
+  latestMessage: text("latest_message"),
+  latestMessageTime: integer("latest_message_time", { mode: "timestamp_ms" }),
 });
 
 export const session = sqliteTable(

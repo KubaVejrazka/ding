@@ -17,7 +17,7 @@
 	/>
 </svelte:head>
 
-<header class="fixed flex h-14 w-full items-center border-b bg-white p-2">
+<header class="fixed z-10 flex h-14 w-full items-center border-b bg-white p-2">
 	{#if data.user}
 		<button
 			class="material-symbols-outlined mx-2 transition-transform hover:cursor-pointer {sidebarOpen

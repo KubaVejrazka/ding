@@ -20,7 +20,20 @@ export const auth = betterAuth({
       },
       groupId: {
         type: "string",
-        required: false,
+        input: false
+      },
+      welcomeMessageSent: {
+        type: "boolean",
+        required: true,
+        defaultValue: false,
+        input: false
+      },
+      latestMessage: {
+        type: "string",
+        input: false
+      },
+      latestMessageTime: {
+        type: "date",
         input: false
       }
     },

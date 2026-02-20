@@ -50,12 +50,11 @@
 			in, gravida a purus.
 		</p>
 	</div>
-	<div class="flex w-full flex-col gap-4">
+	<div class="flex h-min w-full flex-col gap-4">
 		<div class="border bg-white p-4">
-			<h3 class="mb-8 flex items-center font-2 font-semibold">
-				<span class="material-symbols-outlined mr-2">person</span>
-				{existingUser ? 'Vítejte zpátky!' : 'Zaregistrujte se:'}
-			</h3>
+			<h2 class="mb-8 font-2 text-2xl font-semibold">
+				{existingUser ? 'Vítejte zpátky!' : 'Zaregistrujte se'}
+			</h2>
 
 			<form use:enhance action="?/{existingUser ? 'signIn' : 'signUp'}" method="POST">
 				<label for="email" class="text-sm font-semibold">Email:</label><br />
@@ -74,7 +73,7 @@
 						<span class="material-symbols-outlined w-10 text-end">phone</span>
 					</div>
 
-					<p class="mb-4 pr-10 text-xs text-center text-gray-500">
+					<p class="mb-4 pr-10 text-center text-xs text-gray-500">
 						Služba je momentálně dostupná pouze pro uživatele s českým telefonním číslem.
 					</p>
 
@@ -84,7 +83,7 @@
 						<span class="material-symbols-outlined w-10 text-end">badge</span>
 					</div>
 
-					<p class="mb-4 pr-10 text-xs text-center text-gray-500">
+					<p class="mb-4 pr-10 text-center text-xs text-gray-500">
 						Pod tímto jménem vás uvidí vaši blízcí ve zprávách. Můžete ho kdykoliv změnit.
 					</p>
 				{/if}
@@ -109,13 +108,13 @@
 					<span class="material-symbols-outlined w-10 text-end">key_vertical</span>
 				</div>
 				{#if errorMessage}
-					<h4 class="mt-8 text-center text-sm text-red-400">
+					<p class="mt-8 text-center text-sm text-red-400">
 						{errorMessage}
-					</h4>
+					</p>
 				{/if}
 
 				<button
-					class="col-span-4 mt-8 h-12 w-full border bg-black font-2 font-semibold text-white transition-colors hover:cursor-pointer hover:bg-white hover:text-black"
+					class="mt-8 h-12 w-full border bg-black font-2 font-semibold text-white transition-colors hover:cursor-pointer hover:bg-white hover:text-black"
 					>{existingUser ? 'Přihlásit se' : 'Registrovat'}</button
 				>
 			</form>
@@ -123,7 +122,7 @@
 			<h4 class="mt-4 text-center text-sm">
 				{existingUser ? 'Jste tu noví?' : 'Už máte účet?'}
 				<button
-					class="text-red-400 hover:cursor-pointer"
+					class="text-red-400 underline hover:cursor-pointer"
 					onclick={() => {
 						existingUser = !existingUser;
 						errorMessage = '';
