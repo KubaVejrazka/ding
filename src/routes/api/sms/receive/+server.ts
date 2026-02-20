@@ -33,7 +33,7 @@ export const POST: RequestHandler = async ({ request }) => {
     }
 
     const body = await request.json();
-    console.log(username + " to SMS receive endpoint: " + body);
+    console.log(username + " to SMS receive endpoint: " + JSON.stringify(body, null, 2));
 
     return json({
       message: 'ok'
