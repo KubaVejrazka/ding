@@ -74,7 +74,7 @@
 						<span class="material-symbols-outlined w-10 text-end">phone</span>
 					</div>
 
-					<p class="mb-4 pr-10 text-xs text-gray-500">
+					<p class="mb-4 pr-10 text-xs text-center text-gray-500">
 						Služba je momentálně dostupná pouze pro uživatele s českým telefonním číslem.
 					</p>
 
@@ -84,7 +84,7 @@
 						<span class="material-symbols-outlined w-10 text-end">badge</span>
 					</div>
 
-					<p class="mb-4 pr-10 text-xs text-gray-500">
+					<p class="mb-4 pr-10 text-xs text-center text-gray-500">
 						Pod tímto jménem vás uvidí vaši blízcí ve zprávách. Můžete ho kdykoliv změnit.
 					</p>
 				{/if}
