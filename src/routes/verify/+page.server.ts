@@ -1,6 +1,5 @@
 import { redirect, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "../$types";
-import { sendVerificationEmail } from "better-auth/api";
 import { auth } from "$lib/server/auth";
 
 export const load: PageServerLoad = async (event) => {

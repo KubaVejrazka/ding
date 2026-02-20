@@ -2,7 +2,34 @@
 	import { enhance } from '$app/forms';
 	import { onMount } from 'svelte';
 	let { data } = $props();
+
+	let showReplySentButton = $state(true);
+	let errorMessage = $state('');
 	let phoneString = $state('');
+
+	// svelte-ignore non_reactive_update
+	let checkForReplyForm: HTMLFormElement;
+	let checkingForReply = $state(false);
+
+	function checkForReply() {
+		let i = 1;
+		if (checkForReplyForm) {
+			const interval = setInterval(() => {
+				if (!checkingForReply) return;
+				console.log('Reply check...');
+				checkForReplyForm.requestSubmit();
+				i++;
+				if (i >= 10) {
+					clearInterval(interval);
+					errorMessage =
+						'Vaše zpráva zatím nepřišla. Zkuste za chvíli stisknout tlačítko znovu, pokud to nepomůže, pošlete novou zprávu. Ujistěte se, že vaše zpráva splňuje podmínky výše, a že před číslem příjemce máte předvolbu +420.';
+					checkingForReply = false;
+					showReplySentButton = true;
+				}
+			}, 1000);
+		}
+	}
+
 	onMount(() => {
 		phoneString =
 			'+' +
@@ -14,7 +41,6 @@
 			' ' +
 			data.user!.phone.slice(9, 12);
 	});
-	let errorMessage = $state('');
 </script>
 
 <div class="m-4 grid gap-4 md:grid-cols-2">
@@ -27,23 +53,24 @@
 	<div class="h-min border bg-white p-4">
 		{#if !data.user?.welcomeMessageSent}
 			<h2 class="mb-8 font-2 text-2xl font-semibold">Vytvořte si kontakt</h2>
-			<p>Zkontrolujte si, že toto je správné číslo:</p>
+			<p>Zkontrolujte si, že toto je vaše primární telefonní číslo:</p>
 			<h2 class="mb-8 text-2xl font-semibold">{phoneString}</h2>
 			<p class="mb-8 text-sm">
 				Jakmile si necháte poslat přivítací SMS, už ho <span class="font-semibold text-red-400"
 					>nebudete moci změnit</span
 				>.
 				<br />
-				Po obdržení přivítací SMS je doporučené si uložit kontakt, např. "Skupina" nebo "Ding". Prostřednictvím
-				tohoto čísla budete komunikovat se svou skupinou.
+				Po obdržení přivítací SMS je doporučené si číslo odesílatele uložit jako kontakt, např. "Ding"
+				nebo "Skupina". Na mnoha zařízeních jinak vznikají problémy.
+				<span class="font-semibold text-red-400"
+					>Je nutné, abyste si kontakt uložili i s předvolbou +420</span
+				>, jinak se vámi odeslané zprávy nebudou doručovat.
 			</p>
 
 			<form
 				use:enhance={() => {
 					return async ({ result, update }) => {
-						if (result.type !== 'success')
-							errorMessage = 'Něco se nepovedlo :( Zkuste to znovu později.';
-						else await update();
+						if (result.type === 'success') await update();
 					};
 				}}
 				action="?/welcomeMessage"
@@ -70,18 +97,18 @@
 			<h2 class="mb-8 font-2 text-2xl font-semibold">Pošlete svou první zprávu</h2>
 			<p class="text-sm">
 				Měli byste za chvíli dostat přivítací SMS. Pokud do několika minut nedorazí, prosím, <a
-					href="jakvejr@gmail.com"
-					class="text-red-400 underline">kontaktujte podporu</a
-				>.
+					href="mailto:jakvejr@gmail.com"
+					class="text-red-400 underline">kontaktujte vývojáře.</a
+				>
 				<br />
 				<br />
-				Pokud zpráva dorazila, odpovězte na ni (na obsahu odpovědi nezáleží).
+				Pokud zpráva dorazila, odpovězte na ni (např. "odpoved" nebo něco podobného).
 				<span class="font-semibold"
 					>Odpověď na přivítací zprávu ani žádná jiná zpráva poslaná na Ding NESMÍ:</span
 				>
 			</p>
 			<ol class="ml-4 list-inside list-decimal text-sm">
-				<li>Obsahovat speciální znaky (á,é,í,š,č,ř atd.)</li>
+				<li>Obsahovat speciální znaky (á,č,ř atd.)</li>
 				<li>Obsahovat odstavce nebo prázdné řádky</li>
 				<li>Být delší než 140 znaků</li>
 			</ol>
@@ -93,32 +120,76 @@
 				>
 				se můžete kdykoliv podívat, která vaše zpráva dorazila do systému jako poslední.
 				<br /><br />
-				Po odeslání odpovědi počkejte cca 10 sekund a stiskněte tlačítko níže nebo refreshněte stránku.
+				Po odeslání odpovědi stiskněte tlačítko níže.
 			</p>
 			<form
 				use:enhance={() => {
 					return async ({ result, update }) => {
-						if (result.type !== 'success')
-							errorMessage =
-								'Zpráva zatím nedorazila do systému. Prosím, ujistěte se, že splňuje všechny podmínky uvedené výše. Pokud ano, zkuste tlačítko za chvíli stisknout znovu. Pokud ne, napište novou zprávu.';
-						else await update();
+						if (result.type === 'success') {
+							checkingForReply = false;
+							await update();
+						}
 					};
 				}}
 				action="?/checkForReply"
 				method="POST"
+				bind:this={checkForReplyForm}
 			>
-				<button
-					class="mt-8 h-12 w-full border bg-black font-2 font-semibold text-white transition-colors hover:cursor-pointer hover:bg-white hover:text-black"
-					>Odeslal jsem odpověď</button
-				>
+				{#if showReplySentButton}
+					<button
+						type="button"
+						onclick={() => {
+							showReplySentButton = false;
+							checkingForReply = true;
+							errorMessage = '';
+							checkForReplyForm.requestSubmit();
+							checkForReply();
+						}}
+						class="mt-8 h-12 w-full border bg-black font-2 font-semibold text-white transition-colors hover:cursor-pointer hover:bg-white hover:text-black"
+						>Odeslal/a jsem odpověď</button
+					>
+				{/if}
 			</form>
+
+			{#if checkingForReply}
+				<div class="flex h-32 items-center justify-center p-4">
+					<img src="/spinner.svg" alt="Načítám..." class="mr-2 size-6 animate-spin" />
+					<span>Načítám...</span>
+				</div>
+			{/if}
 
 			{#if errorMessage}
 				<p class="mt-8 text-center text-sm text-red-400">
 					{errorMessage}
 				</p>
 			{/if}
+		{:else}
+			<h2 class="mb-8 font-2 text-2xl font-semibold">Moje skupina</h2>
+			{#if !data.user.groupId}
+				<p class="text-sm">
+					Momentálně nejste v žádné skupině. Můžete buď vytvořit novou, nebo se přidat do
+					existující. Pro přidání do existující skupiny musíte požádat jejího autora, aby vám poslal
+					pozvánku.
+				</p>
+				<p class="mt-8 text-center text-sm text-red-400">Work in progress</p>
+			{/if}
 		{/if}
 	</div>
-	<div class="h-min border bg-white p-4"></div>
+	<div class="h-min border bg-white p-4">
+		<h2 class="mb-8 font-2 text-2xl font-semibold">Dobijte si kredit</h2>
+		<p class="mb-8 text-sm">
+			Na začátek máte zkušební kredit 10 Kč (5 zpráv), pak je potřeba si dobíjet kredit dopředu.
+			Cena za každou odeslanou zprávu je 2 Kč, tzn. pokud píšete do skupiny, kde jsou kromě vás 3
+			další lidé, platíte za každou zprávu 6 Kč (3×2).
+		</p>
+		<h4 class="text-lg font-semibold">Váš kredit:</h4>
+		<span class="text-6xl">{data.user?.credit} Kč</span>
+
+		<button class="mt-8 h-12 w-full border bg-red-50">Dobít kredit</button>
+
+		<p class="mt-8 text-center text-sm text-red-400">
+			Služba je v testovacím režimu a kredit momentálně nelze dobíjet. Administrátoři a ověření
+			testeři ale můžou do mínusu :)
+		</p>
+	</div>
 </div>

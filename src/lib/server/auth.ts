@@ -35,6 +35,12 @@ export const auth = betterAuth({
       latestMessageTime: {
         type: "date",
         input: false
+      },
+      credit: {
+        type: "number",
+        input: false,
+        defaultValue: 10,
+        required: true
       }
     },
   },

@@ -38,7 +38,7 @@
 
 {#if data.user}
 	<div
-		class="fixed top-14 bottom-0 z-10 flex w-64 flex-col items-center bg-white p-4 transition-transform {sidebarOpen
+		class="fixed top-14 bottom-14 z-10 flex w-64 flex-col items-center bg-white p-4 transition-transform {sidebarOpen
 			? 'border-r'
 			: '-translate-x-64'}"
 	>
@@ -72,8 +72,22 @@
 				</form>
 			{/if}
 		</div>
-		<div class="w-full grow border bg-red-100"></div>
+		<div class="flex w-full grow items-center justify-center border bg-red-50">
+			<span>Work in progress</span>
+		</div>
 	</div>
 {/if}
 
+<footer
+	class="fixed bottom-0 z-10 flex h-14 w-full items-center justify-center border-t bg-white p-4"
+>
+	<h4 class="text-center text-xs">
+		Služba je ve vývoji. S problémy a připomínkami <a
+			href="mailto:jakvejr@gmail.com"
+			class="text-red-400 underline">se obraťte na vývojáře.</a
+		>
+	</h4>
+</footer>
+
 {@render children()}
+<div class="h-14"></div>

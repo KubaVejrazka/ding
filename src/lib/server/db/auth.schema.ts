@@ -23,6 +23,7 @@ export const user = sqliteTable("user", {
     .notNull(),
   latestMessage: text("latest_message"),
   latestMessageTime: integer("latest_message_time", { mode: "timestamp_ms" }),
+  credit: integer("credit").default(10).notNull(),
 });
 
 export const session = sqliteTable(
