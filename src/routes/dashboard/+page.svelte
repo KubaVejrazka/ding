@@ -88,7 +88,7 @@
 			<br />
 			<p class="text-sm">
 				Jakákoliv zpráva, která nesplní tyto podmínky, nebude doručena. Na stránce <a
-					href=""
+					href="/"
 					class="text-red-400 underline">poslední doručená SMS</a
 				>
 				se můžete kdykoliv podívat, která vaše zpráva dorazila do systému jako poslední.

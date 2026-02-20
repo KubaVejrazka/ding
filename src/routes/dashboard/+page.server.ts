@@ -13,35 +13,35 @@ export const actions: Actions = {
     }
 
     try {
-      // const response = await event.fetch('https://api.smsmngr.com/v2/message', {
-      //   method: 'POST',
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //     "x-api-key": env.SMS_API_KEY
-      //   },
-      //   body: JSON.stringify({
-      //     "flow": [
-      //       {
-      //         "sms": {
-      //           "body": "Vita vas Ding :)",
-      //           "gateway": "direct",
-      //           "sender": env.SMS_SENDER
-      //         }
-      //       }
-      //     ],
-      //     "to": [
-      //       {
-      //         "phone_number": event.locals.user.phone
-      //       }
-      //     ]
-      //   })
-      // });
-      //
-      // if (!response.ok) {
-      //   const errorDetails = await response.text();
-      //   console.error("Failed to send message (API rejection):", errorDetails);
-      //   return fail(response.status);
-      // }
+      const response = await event.fetch('https://api.smsmngr.com/v2/message', {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": env.SMS_API_KEY
+        },
+        body: JSON.stringify({
+          "flow": [
+            {
+              "sms": {
+                "body": "Vita vas Ding :)",
+                "gateway": "direct",
+                "sender": env.SMS_SENDER
+              }
+            }
+          ],
+          "to": [
+            {
+              "phone_number": event.locals.user.phone
+            }
+          ]
+        })
+      });
+
+      if (!response.ok) {
+        const errorDetails = await response.text();
+        console.error("Failed to send message (API rejection):", errorDetails);
+        return fail(response.status);
+      }
       await db.update(user).set({ welcomeMessageSent: true }).where(eq(user.id, event.locals.user!.id))
 
     } catch (error) {
