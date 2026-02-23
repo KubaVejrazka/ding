@@ -2,7 +2,7 @@ import { relations, sql } from "drizzle-orm";
 import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core";
 // export * from './auth.schema';
 
-export const groups = sqliteTable("groups", {
+export const group = sqliteTable("group", {
   id: text("id").primaryKey(), // Using text for UUID/IDs
   name: text("name").notNull(),
   ownerId: text("owner_id").notNull().references((): any => user.id),
@@ -25,7 +25,7 @@ export const user = sqliteTable("user", {
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
   phone: text("phone").notNull().unique(),
-  groupId: text("group_id").references((): any => groups.id),
+  groupId: text("group_id").references((): any => group.id),
   welcomeMessageSent: integer("welcome_message_sent", { mode: "boolean" })
     .default(false)
     .notNull(),
