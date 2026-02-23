@@ -17,6 +17,8 @@ export const actions: Actions = {
   },
 
   signIn: async (event) => {
+    if (event.locals.user) return redirect(302, '/dashboard');
+
     const formData = await event.request.formData();
     const email = formData.get('email')?.toString() ?? '';
     const password = formData.get('password')?.toString() ?? '';
@@ -41,6 +43,8 @@ export const actions: Actions = {
   },
 
   signUp: async (event) => {
+    if (event.locals.user) return redirect(302, '/dashboard');
+
     const formData = await event.request.formData();
     const email = formData.get('email')?.toString() ?? '';
     const phone = formData.get('phone')?.toString() ?? '';
