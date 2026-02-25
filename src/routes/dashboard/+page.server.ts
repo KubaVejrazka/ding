@@ -9,32 +9,24 @@ const disableSMS = env.DISABLE_SMS === "true";
 export const actions: Actions = {
   welcomeMessage: async (event) => {
     if (!event.locals.user?.emailVerified || event.locals.user.welcomeMessageSent) {
-      return fail(401);
+      return fail(400);
     }
 
     try {
+      console.log("Sending welcome SMS to " + event.locals.user.email)
       if (!disableSMS) {
-        const response = await event.fetch('https://api.smsmngr.com/v2/message', {
+        const response = await event.fetch('https://portal.bulkgate.com/api/1.0/simple/transactional', {
           method: 'POST',
           headers: {
             "Content-Type": "application/json",
-            "x-api-key": env.SMS_API_KEY
           },
           body: JSON.stringify({
-            "flow": [
-              {
-                "sms": {
-                  "body": "Vita vas Ding :)",
-                  "gateway": "direct",
-                  "sender": env.SMS_SENDER
-                }
-              }
-            ],
-            "to": [
-              {
-                "phone_number": event.locals.user.phone
-              }
-            ]
+            "application_id": env.BULKGATE_ID,
+            "application_token": env.BULKGATE_TOKEN,
+            "number": event.locals.user.phone,
+            "text": "Vítá Vás Ding :)",
+            "unicode": "true",
+            "country": "cz"
           })
         });
 

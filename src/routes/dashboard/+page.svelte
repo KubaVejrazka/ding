@@ -201,7 +201,7 @@
 				<div
 					class="mx-auto flex min-h-32 flex-col justify-between rounded-xl border border-red-400 bg-red-50 p-4 lg:w-1/2"
 				>
-					<p class="font-2 text-lg">{data.user?.latestMessage}</p>
+					<p class="font-2 text-lg text-red-400">{data.user?.latestMessage}</p>
 					<span class="mt-2 text-end text-xs text-red-400"
 						>{data.user?.latestMessageTime.getDate()}.{data.user?.latestMessageTime.getMonth()! +
 							1}. {data.user?.latestMessageTime.getHours()}:{data.user?.latestMessageTime

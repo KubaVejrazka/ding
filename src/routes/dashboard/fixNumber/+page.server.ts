@@ -10,6 +10,8 @@ export const load: PageServerLoad = async (event) => {
 
 export const actions: Actions = {
   fixPhone: async (event) => {
+    if (event.locals.user?.welcomeMessageSent) return redirect(302, '/dashboard')
+
     const formData = await event.request.formData();
     const phone = formData.get('phone')?.toString() ?? '';
     if (!(/^[0-9]{9}$/.test(phone)) || event.locals.user?.welcomeMessageSent) return fail(400, { code: 'INVALID_PHONE' });

@@ -3,7 +3,7 @@ import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core";
 // export * from './auth.schema';
 
 export const group = sqliteTable("group", {
-  id: text("id").primaryKey(), // Using text for UUID/IDs
+  id: text("id").primaryKey(),
   name: text("name").notNull(),
   ownerId: text("owner_id").notNull().references((): any => user.id),
 });
@@ -103,9 +103,13 @@ export const verification = sqliteTable(
   (table) => [index("verification_identifier_idx").on(table.identifier)],
 );
 
-export const userRelations = relations(user, ({ many }) => ({
+export const userRelations = relations(user, ({ many, one }) => ({
   sessions: many(session),
   accounts: many(account),
+  group: one(group, {
+    fields: [user.groupId],
+    references: [group.id],
+  }),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -118,6 +122,14 @@ export const sessionRelations = relations(session, ({ one }) => ({
 export const accountRelations = relations(account, ({ one }) => ({
   user: one(user, {
     fields: [account.userId],
+    references: [user.id],
+  }),
+}));
+
+export const groupRelations = relations(group, ({ many, one }) => ({
+  users: many(user),
+  owner: one(user, {
+    fields: [group.ownerId],
     references: [user.id],
   }),
 }));
