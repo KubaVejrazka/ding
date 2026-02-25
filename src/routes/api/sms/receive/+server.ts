@@ -6,7 +6,7 @@ import { eq } from 'drizzle-orm';
 
 const disableSMS = env.DISABLE_SMS === "true";
 
-export const POST: RequestHandler = async ({ url }) => {
+export const GET: RequestHandler = async ({ url }) => {
   try {
     const secret = url.searchParams.get('secret');
 
