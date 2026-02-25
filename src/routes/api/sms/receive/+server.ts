@@ -47,7 +47,7 @@ export const GET: RequestHandler = async ({ url }) => {
             for (const u of targetGroup.users) {
               if (u.id === senderId) { // TEMPORARY FOR TESTING
                 if (!disableSMS) {
-                  const response = await fetch('https://api.smsmngr.com/v2/message', {
+                  const response = await fetch('https://portal.bulkgate.com/api/1.0/simple/transactional', {
                     method: 'POST',
                     headers: {
                       "Content-Type": "application/json",
