@@ -6,42 +6,17 @@ import { eq } from 'drizzle-orm';
 
 const disableSMS = env.DISABLE_SMS === "true";
 
-const allowedUsers = ['admin', 'sms'];
-const validPassword = env.SMS_AUTH_PASSWORD;
-
-export const POST: RequestHandler = async ({ request, url }) => {
-  const authHeader = request.headers.get('Authorization');
-
-  const requireAuth = () => {
-    return json(
-      { message: 'auth fail' },
-      {
-        status: 401,
-        headers: {
-          'WWW-Authenticate': 'Basic realm="SMS API"'
-        }
-      }
-    );
-  };
-
-  if (!authHeader || !authHeader.startsWith('Basic ')) {
-    return requireAuth();
-  }
-
+export const POST: RequestHandler = async ({ url }) => {
   try {
-    const base64Credentials = authHeader.split(' ')[1];
-    const decodedCredentials = atob(base64Credentials);
-    const [username, password] = decodedCredentials.split(':');
+    const secret = url.searchParams.get('secret');
 
-    if (!allowedUsers.includes(username) || password !== validPassword) {
-      return requireAuth();
+    if (secret !== env.WEBHOOK_SECRET) {
+      return json({ message: 'auth fail' })
     }
 
     const statusParam = url.searchParams.get('status');
     const senderParam = url.searchParams.get('from') ?? '';
     const messageParam = url.searchParams.get('message');
-
-    console.log("Incoming request params: status=" + statusParam + ", from=" + senderParam + ", message=" + messageParam);
 
     if (statusParam === "10") {
       const sender = await db.query.user.findFirst({
@@ -51,7 +26,7 @@ export const POST: RequestHandler = async ({ request, url }) => {
         const senderId = sender.id;
         const groupId = sender.groupId;
 
-        console.log("Incoming message (" + username + ") from " + sender.email)
+        console.log("Incoming message from " + sender.email)
 
         await db.update(user).set({
           latestMessage: messageParam,
