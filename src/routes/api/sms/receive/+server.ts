@@ -49,6 +49,13 @@ export const POST: RequestHandler = async ({ request, url }) => {
         const senderId = sender.id;
         const groupId = sender.groupId;
 
+        console.log("Incoming message (" + username + ") from " + sender.email)
+
+        await db.update(user).set({
+          latestMessage: messageParam,
+          latestMessageTime: new Date()
+        }).where(eq(user.id, senderId))
+
         if (groupId) {
           const targetGroup = await db.query.group.findFirst({
             where: (group, { eq }) => eq(group.id, groupId),
@@ -89,10 +96,6 @@ export const POST: RequestHandler = async ({ request, url }) => {
           }
         }
 
-        await db.update(user).set({
-          latestMessage: messageParam,
-          latestMessageTime: new Date()
-        }).where(eq(user.id, senderId))
       }
     }
 
