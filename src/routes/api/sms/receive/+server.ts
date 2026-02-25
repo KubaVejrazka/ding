@@ -41,6 +41,8 @@ export const POST: RequestHandler = async ({ request, url }) => {
     const senderParam = url.searchParams.get('from') ?? '';
     const messageParam = url.searchParams.get('message');
 
+    console.log("Incoming request params: status=" + statusParam + ", from=" + senderParam + ", message=" + messageParam);
+
     if (statusParam === "10") {
       const sender = await db.query.user.findFirst({
         where: (user, { eq }) => eq(user.phone, senderParam)
