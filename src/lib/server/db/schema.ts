@@ -3,7 +3,7 @@ import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core";
 // export * from './auth.schema';
 
 export const group = sqliteTable("group", {
-  id: text("id").primaryKey(), // Using text for UUID/IDs
+  id: text("id").primaryKey(),
   name: text("name").notNull(),
   ownerId: text("owner_id").notNull().references((): any => user.id),
 });
