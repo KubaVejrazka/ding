@@ -19,16 +19,16 @@ export const actions: Actions = {
     try {
       const newGroupId = crypto.randomUUID()
 
-      await db.transaction(async (tx) => {
-        await tx.insert(group).values({
+      db.transaction((tx) => {
+        tx.insert(group).values({
           id: newGroupId,
           name,
           ownerId: event.locals.user!.id
-        });
+        }).run();
 
-        await tx.update(user)
+        tx.update(user)
           .set({ groupId: newGroupId })
-          .where(eq(user.id, event.locals.user!.id));
+          .where(eq(user.id, event.locals.user!.id)).run();
       });
     } catch (error) {
       console.error("Error creating group " + name + " (" + event.locals.user!.email + "): ", error);

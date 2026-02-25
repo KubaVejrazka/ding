@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	let { data } = $props();
 
@@ -55,13 +56,8 @@
 			<p class="mb-8 text-justify">
 				Jakmile si necháte poslat přivítací SMS, už ho <span class="font-semibold text-red-400"
 					>nebudete moci změnit</span
-				>.
-				<br /><br />
-				Po obdržení přivítací SMS je doporučené si číslo odesílatele uložit jako kontakt, např. "Ding"
-				nebo "Skupina". Na mnoha zařízeních jinak vznikají problémy.
-				<span class="font-semibold text-red-400"
-					>Je nutné, abyste si kontakt uložili i s předvolbou +420</span
-				>, jinak se vámi odeslané zprávy nebudou doručovat.
+				>. Po obdržení přivítací SMS je doporučené si číslo odesílatele uložit jako kontakt, např.
+				"Ding" nebo "Skupina".
 			</p>
 
 			<form
@@ -104,18 +100,18 @@
 				podobného).
 				<br /><br />
 				<span class="font-semibold"
-					>Odpověď na přivítací zprávu ani žádná jiná zpráva poslaná na Ding NESMÍ:</span
+					>Odpověď na přivítací zprávu ani žádná jiná zpráva poslaná na Ding by neměla:</span
 				>
 			</p>
 			<ol class="mt-2 ml-4 list-inside list-decimal text-justify">
 				<li>Obsahovat speciální znaky (á,č,ř atd.)</li>
-				<li>Obsahovat odstavce nebo prázdné řádky</li>
 				<li>Být delší než 140 znaků</li>
 			</ol>
 			<br />
 			<p class="text-justify">
-				Jakákoliv zpráva, která nesplní tyto podmínky, nebude doručena. V panelu "Poslední doručená
-				SMS" se můžete kdykoliv podívat, která vaše zpráva dorazila do systému jako poslední.
+				Pokud pošlete zprávu, která bude obsahovat speciální znaky, ostatním členům vaší skupiny
+				přijde bez nich, nebo budou nahrazeny (např. Á bude změněno na A apod.). Pokud přesáhnete
+				140 znaků, vaše zpráva nebude ostatním členům doručena vůbec.
 				<br /><br />
 				Po odeslání odpovědi stiskněte tlačítko níže.
 			</p>
@@ -168,7 +164,11 @@
 					existující. Pro přidání do existující skupiny musíte požádat jejího autora, aby vám poslal
 					pozvánku.
 				</p>
-				<p class="mt-8 text-center text-red-400">Work in progress</p>
+				<button
+					class="mt-8 h-12 w-full border bg-black font-2 font-semibold text-white transition-colors hover:cursor-pointer hover:bg-white hover:text-black"
+					onclick={() => goto('/dashboard/createGroup')}>Vytvořit novou skupinu</button
+				>
+				<!-- <p class="mt-8 text-center text-red-400">Work in progress</p> -->
 			{/if}
 		{/if}
 	</div>

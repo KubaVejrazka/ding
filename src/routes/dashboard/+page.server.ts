@@ -13,8 +13,8 @@ export const actions: Actions = {
     }
 
     try {
-      console.log("Sending welcome SMS to " + event.locals.user.email)
       if (!disableSMS) {
+        console.log("Sending welcome SMS to " + event.locals.user.email)
         const response = await event.fetch('https://portal.bulkgate.com/api/1.0/simple/transactional', {
           method: 'POST',
           headers: {
@@ -34,11 +34,13 @@ export const actions: Actions = {
           const errorDetails = await response.text();
           console.error("Failed to send message (API rejection):", errorDetails);
           return fail(response.status);
+        } else {
+          await db.update(user).set({ welcomeMessageSent: true }).where(eq(user.id, event.locals.user!.id))
         }
+      } else {
+        console.log("Fake sending welcome message to " + event.locals.user.email)
+        await db.update(user).set({ welcomeMessageSent: true }).where(eq(user.id, event.locals.user!.id))
       }
-
-      await db.update(user).set({ welcomeMessageSent: true }).where(eq(user.id, event.locals.user!.id))
-
     } catch (error) {
       console.log(error);
       return fail(500);
