@@ -9,6 +9,7 @@
 			<label for="name" class="font-semibold">Název skupiny:</label><br />
 			<div class="mb-1 flex items-center">
 				<input
+					required
 					type="text"
 					name="name"
 					maxlength="30"

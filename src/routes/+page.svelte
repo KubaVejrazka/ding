@@ -99,33 +99,45 @@
 							type="text"
 							name="name"
 							maxlength="15"
-							placeholder="Honza Novak"
+							placeholder="Honza N"
 							class="h-8 grow rounded-none border bg-gray-100 px-2 py-1 placeholder:text-xs placeholder:text-gray-500"
 						/>
 						<span class="material-symbols-outlined w-10 text-end">badge</span>
 					</div>
 
 					<p class="mb-4 pr-10 text-center text-sm text-gray-500">
-						Přezdívka nesmí obsahovat žádné speciální znaky (á,č,ř atd.).
+						Přezdívka nesmí obsahovat žádné speciální znaky (á,č,ř atd.), max 15 znaků.
 					</p>
 				{/if}
 
 				<label for="password" class="font-semibold">Heslo:</label><br />
 				<div class="mb-4 flex items-center">
 					<div class="flex grow flex-col gap-2">
-						<input
-							type="password"
-							name="password"
-							class="h-8 rounded-none border bg-gray-100 px-2 py-1 placeholder:text-xs placeholder:text-gray-500"
-							placeholder="Zadejte heslo"
-						/>
-						{#if !existingUser}
+						<div class="flex">
 							<input
 								type="password"
-								name="passwordConfirmation"
-								class="h-8 rounded-none border bg-gray-100 px-2 py-1 placeholder:text-xs placeholder:text-gray-500"
-								placeholder="Zadejte heslo znovu"
+								name="password"
+								class="h-8 grow rounded-none border border-r-0 bg-gray-100 px-2 py-1 placeholder:text-xs placeholder:text-gray-500"
+								placeholder="Zadejte heslo"
 							/>
+							<button
+								class="material-symbols-outlined flex h-8 items-center border border-l-0 border-black bg-gray-100 px-2 text-gray-500 hover:cursor-pointer"
+								type="button">visibility_off</button
+							>
+						</div>
+						{#if !existingUser}
+							<div class="flex">
+								<input
+									type="password"
+									name="passwordConfirmation"
+									class="h-8 grow rounded-none border border-r-0 bg-gray-100 px-2 py-1 placeholder:text-xs placeholder:text-gray-500"
+									placeholder="Zadejte heslo znovu"
+								/>
+								<button
+									class="material-symbols-outlined flex h-8 items-center border border-l-0 border-black bg-gray-100 px-2 text-gray-500 hover:cursor-pointer"
+									type="button">visibility_off</button
+								>
+							</div>
 						{/if}
 					</div>
 					<span class="material-symbols-outlined w-10 text-end">key_vertical</span>

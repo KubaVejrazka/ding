@@ -53,7 +53,7 @@ export const actions: Actions = {
     const name = formData.get('name')?.toString() ?? '';
 
     if (passwordConfirmation !== password) return fail(400, { code: 'PASSWORD_MISMATCH' });
-    if (!(/^[a-zA-Z0-9 _-]{1,15}$/.test(name))) return fail(400, { code: 'INVALID_USERNAME' });
+    if (!(/^[a-zA-Z0-9 _.-]{1,15}$/.test(name))) return fail(400, { code: 'INVALID_USERNAME' });
     if (!(/^[0-9]{9}$/.test(phone))) return fail(400, { code: 'INVALID_PHONE' });
 
     try {

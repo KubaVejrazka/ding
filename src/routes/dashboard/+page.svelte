@@ -4,6 +4,8 @@
 	import { onMount } from 'svelte';
 	let { data } = $props();
 
+	let expandedIndex = $state(-1);
+
 	let showReplySentButton = $state(true);
 	let errorMessage = $state('');
 	let phoneString = $state('');
@@ -23,7 +25,7 @@
 				if (i >= 10) {
 					clearInterval(interval);
 					errorMessage =
-						'Vaše zpráva zatím nepřišla. Zkuste za chvíli stisknout tlačítko znovu, pokud to nepomůže, pošlete novou zprávu. Ujistěte se, že vaše zpráva splňuje podmínky výše, a že před číslem příjemce máte předvolbu +420.';
+						'Vaše zpráva zatím nepřišla. Zkuste za chvíli stisknout tlačítko znovu, pokud to nepomůže, pošlete novou zprávu. Ujistěte se, že odpovídáte správnému číslu a že před číslem příjemce máte předvolbu +420.';
 					checkingForReply = false;
 					showReplySentButton = true;
 				}
@@ -63,7 +65,7 @@
 			<form
 				use:enhance={() => {
 					return async ({ result, update }) => {
-						if (result.type === 'success') await update();
+						if (result) await update();
 					};
 				}}
 				action="?/welcomeMessage"
@@ -74,12 +76,6 @@
 					>Odeslat přivítací SMS</button
 				>
 			</form>
-
-			{#if errorMessage}
-				<p class="mt-8 text-center text-red-400">
-					{errorMessage}
-				</p>
-			{/if}
 
 			<p class="mt-8 text-justify">
 				Číslo je špatně? <a
@@ -109,9 +105,10 @@
 			</ol>
 			<br />
 			<p class="text-justify">
-				Pokud pošlete zprávu, která bude obsahovat speciální znaky, ostatním členům vaší skupiny
-				přijde bez nich, nebo budou nahrazeny (např. Á bude změněno na A apod.). Pokud přesáhnete
-				140 znaků, vaše zpráva nebude ostatním členům doručena vůbec.
+				Pokud pošlete zprávu, která bude obsahovat speciální znaky, přijde ostatním členům skupiny
+				upravená (např. Á bude změněno na A apod.). Smajlíci se změní v nečitelné sekvence znaků,
+				nepoužívejte je. Pokud přesáhnete 140 znaků, vaše zpráva nebude ostatním členům skupiny
+				doručena vůbec.
 				<br /><br />
 				Po odeslání odpovědi stiskněte tlačítko níže.
 			</p>
@@ -158,7 +155,7 @@
 			{/if}
 		{:else}
 			<h2 class="mb-8 font-2 text-2xl font-semibold">Moje skupina</h2>
-			{#if !data.user.groupId}
+			{#if !data.group}
 				<p>
 					Momentálně nejste v žádné skupině. Můžete buď vytvořit novou, nebo se přidat do
 					existující. Pro přidání do existující skupiny musíte požádat jejího autora, aby vám poslal
@@ -168,7 +165,71 @@
 					class="mt-8 h-12 w-full border bg-black font-2 font-semibold text-white transition-colors hover:cursor-pointer hover:bg-white hover:text-black"
 					onclick={() => goto('/dashboard/createGroup')}>Vytvořit novou skupinu</button
 				>
-				<!-- <p class="mt-8 text-center text-red-400">Work in progress</p> -->
+			{:else}
+				<h3 class="flex items-center text-xl">
+					<span class="material-symbols-outlined mr-2">group</span>{data.group.name}
+				</h3>
+				<hr />
+				<h4 class="mt-4">
+					Seznam členů ({data.group.users.length}):
+				</h4>
+				<ul class="ml-4">
+					{#each data.group.users as member, i}
+						{#if i !== 0}
+							<hr class="mt-2 border-t-gray-100" />
+						{/if}
+						<li class="mt-2 flex items-center justify-between">
+							<div class="flex flex-col">
+								<span class="font-semibold">{member.name}</span>
+								<span class="text-xs">{member.email}</span>
+							</div>
+							{#if (data.user.id === data.group.ownerId && member.id !== data.user.id) || (data.user.id !== data.group.ownerId && member.id === data.user.id)}
+								<div>
+									<button
+										class="flex items-center hover:cursor-pointer"
+										onclick={() => (expandedIndex = i === expandedIndex ? -1 : i)}
+									>
+										<span class="material-symbols-outlined">more_vert</span>
+									</button>
+								</div>
+							{/if}
+						</li>
+						<div
+							class="flex justify-end transition-transform {expandedIndex === i
+								? 'scale-y-100'
+								: 'scale-y-0'}"
+						>
+							<form
+								use:enhance={() => {
+									return async ({ update }) => {
+										await update();
+									};
+								}}
+								method="POST"
+								action="?/removeFromGroup"
+							>
+								<input type="hidden" name="id" value={member.id} />
+								{#if expandedIndex === i}
+									<button
+										class="items-centergap-2 mt-2 flex gap-2 border border-red-400 bg-red-400 p-2 text-white transition-colors hover:cursor-pointer hover:bg-white hover:text-red-400"
+									>
+										<span class="material-symbols-outlined">logout</span>
+										{member.id === data.user.id ? 'Opustit skupinu' : 'Odstranit ze skupiny'}
+									</button>
+								{/if}
+							</form>
+						</div>
+					{/each}
+				</ul>
+				{#if data.user.id === data.group.ownerId}
+					<button
+						class="mt-4 h-12 w-full border bg-black font-2 font-semibold text-white transition-colors hover:cursor-pointer hover:bg-white hover:text-black"
+						onclick={() => goto('/dashboard/addMember')}>Pozvat nového člena</button
+					>
+				{/if}
+
+				<h4 class="mt-8">Aktuální cena za zprávu:</h4>
+				<span class="text-4xl">{(data.group.users.length - 1) * 2} Kč</span>
 			{/if}
 		{/if}
 	</div>
@@ -182,8 +243,6 @@
 			</p>
 			<h4 class="text-lg font-semibold">Váš kredit:</h4>
 			<span class="text-6xl">{data.user?.credit} Kč</span>
-
-			<!-- <button class="mt-8 h-12 w-full border bg-red-50">Dobít kredit</button> -->
 
 			<p class="mt-8 text-center text-gray-500">
 				Služba je v testovacím režimu a kredit momentálně nelze dobíjet. Administrátoři a ověření

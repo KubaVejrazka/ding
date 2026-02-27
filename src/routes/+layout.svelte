@@ -10,7 +10,7 @@
 
 	let phoneString = $state('');
 	onMount(() => {
-		if (data.user) {
+		if (data.user?.phone) {
 			phoneString =
 				'+' +
 				data.user!.phone.slice(0, 3) +

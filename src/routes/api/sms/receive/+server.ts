@@ -66,7 +66,7 @@ export const GET: RequestHandler = async ({ url }) => {
 
             for (const u of targetGroup.users) {
               if (u.id !== senderId) {
-                if (!disableSMS) {
+                if (!disableSMS && messageParam!.length <= 140) {
                   const response = await fetch('https://portal.bulkgate.com/api/1.0/simple/transactional', {
                     method: 'POST',
                     headers: {

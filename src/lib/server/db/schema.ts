@@ -8,6 +8,13 @@ export const group = sqliteTable("group", {
   ownerId: text("owner_id").notNull().references((): any => user.id),
 });
 
+export const invite = sqliteTable("invite", {
+  token: text("token").primaryKey(),
+  email: text("email").notNull(),
+  groupId: text("group_id").references((): any => group.id),
+  used: integer("used", { mode: "boolean" })
+})
+
 // AUTH
 export const user = sqliteTable("user", {
   id: text("id").primaryKey(),
