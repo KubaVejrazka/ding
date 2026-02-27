@@ -23,7 +23,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 
           tx.update(invite)
             .set({ used: true })
-            .where(eq(invite.token, token))
+            .where(eq(invite.token, token)).run();
         });
 
         success = true;

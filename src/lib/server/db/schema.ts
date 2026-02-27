@@ -11,7 +11,7 @@ export const group = sqliteTable("group", {
 export const invite = sqliteTable("invite", {
   token: text("token").primaryKey(),
   email: text("email").notNull(),
-  groupId: text("group_id").references((): any => group.id),
+  groupId: text("group_id").notNull(),
   used: integer("used", { mode: "boolean" })
 })
 

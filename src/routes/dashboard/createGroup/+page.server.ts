@@ -14,7 +14,7 @@ export const actions: Actions = {
 
     const formData = await event.request.formData();
     const name = formData.get('name')?.toString() ?? '';
-    if (name.length > 30) return fail(400, { code: 'NAME_TOO_LONG' })
+    if (!name || name.length > 30) return fail(400, { code: 'INVALID_NAME' })
 
     try {
       const newGroupId = crypto.randomUUID()

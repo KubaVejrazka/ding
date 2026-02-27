@@ -37,6 +37,9 @@
 		if (phoneValue[phoneValue.length - 1] < '0' || phoneValue[phoneValue.length - 1] > '9')
 			phoneValue = phoneValue.slice(0, -1);
 	}
+
+	let showPassword1 = $state(false);
+	let showPassword2 = $state(false);
 </script>
 
 <div class="m-4 grid grow grid-cols-1 gap-4 lg:grid-cols-2">
@@ -68,7 +71,7 @@
 						type="email"
 						name="email"
 						placeholder="jan.novak@email.cz"
-						class="h-8 grow rounded-none border bg-gray-100 px-2 py-1 placeholder:text-xs placeholder:text-gray-500"
+						class="h-8 min-w-32 grow rounded-none border bg-gray-100 px-2 py-1 placeholder:text-xs placeholder:text-gray-500"
 					/>
 					<span class="material-symbols-outlined w-10 text-end">email</span>
 				</div>
@@ -84,7 +87,7 @@
 							oninput={updatePhoneValue}
 							maxlength="9"
 							placeholder="765 432 111"
-							class="h-8 grow rounded-none border bg-gray-100 px-2 py-1 placeholder:text-xs placeholder:text-gray-500"
+							class="h-8 min-w-32 grow rounded-none border bg-gray-100 px-2 py-1 placeholder:text-xs placeholder:text-gray-500"
 						/>
 						<span class="material-symbols-outlined w-10 text-end">phone</span>
 					</div>
@@ -100,7 +103,7 @@
 							name="name"
 							maxlength="15"
 							placeholder="Honza N"
-							class="h-8 grow rounded-none border bg-gray-100 px-2 py-1 placeholder:text-xs placeholder:text-gray-500"
+							class="h-8 min-w-32 grow rounded-none border bg-gray-100 px-2 py-1 placeholder:text-xs placeholder:text-gray-500"
 						/>
 						<span class="material-symbols-outlined w-10 text-end">badge</span>
 					</div>
@@ -115,27 +118,31 @@
 					<div class="flex grow flex-col gap-2">
 						<div class="flex">
 							<input
-								type="password"
+								type={showPassword1 ? 'text' : 'password'}
 								name="password"
-								class="h-8 grow rounded-none border border-r-0 bg-gray-100 px-2 py-1 placeholder:text-xs placeholder:text-gray-500"
+								class="h-8 min-w-32 grow rounded-none border border-r-0 bg-gray-100 px-2 py-1 placeholder:text-xs placeholder:text-gray-500"
 								placeholder="Zadejte heslo"
 							/>
 							<button
 								class="material-symbols-outlined flex h-8 items-center border border-l-0 border-black bg-gray-100 px-2 text-gray-500 hover:cursor-pointer"
-								type="button">visibility_off</button
+								type="button"
+								onclick={() => (showPassword1 = !showPassword1)}
+								>{showPassword1 ? 'visibility_off' : 'visibility'}</button
 							>
 						</div>
 						{#if !existingUser}
 							<div class="flex">
 								<input
-									type="password"
+									type={showPassword2 ? 'text' : 'password'}
 									name="passwordConfirmation"
-									class="h-8 grow rounded-none border border-r-0 bg-gray-100 px-2 py-1 placeholder:text-xs placeholder:text-gray-500"
+									class="h-8 min-w-32 grow rounded-none border border-r-0 bg-gray-100 px-2 py-1 placeholder:text-xs placeholder:text-gray-500"
 									placeholder="Zadejte heslo znovu"
 								/>
 								<button
 									class="material-symbols-outlined flex h-8 items-center border border-l-0 border-black bg-gray-100 px-2 text-gray-500 hover:cursor-pointer"
-									type="button">visibility_off</button
+									type="button"
+									onclick={() => (showPassword2 = !showPassword2)}
+									>{showPassword2 ? 'visibility_off' : 'visibility'}</button
 								>
 							</div>
 						{/if}

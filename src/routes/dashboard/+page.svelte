@@ -166,9 +166,14 @@
 					onclick={() => goto('/dashboard/createGroup')}>Vytvořit novou skupinu</button
 				>
 			{:else}
-				<h3 class="flex items-center text-xl">
-					<span class="material-symbols-outlined mr-2">group</span>{data.group.name}
-				</h3>
+				<div class="flex w-full items-center justify-between">
+					<h3 class="flex items-center text-xl">
+						<span class="material-symbols-outlined mr-2">group</span>{data.group.name}
+					</h3>
+					{#if data.user.id === data.group.ownerId}
+						<a href="/dashboard/manageGroup" class="text-red-400 underline">Spravovat skupinu</a>
+					{/if}
+				</div>
 				<hr />
 				<h4 class="mt-4">
 					Seznam členů ({data.group.users.length}):
@@ -211,7 +216,7 @@
 								<input type="hidden" name="id" value={member.id} />
 								{#if expandedIndex === i}
 									<button
-										class="items-centergap-2 mt-2 flex gap-2 border border-red-400 bg-red-400 p-2 text-white transition-colors hover:cursor-pointer hover:bg-white hover:text-red-400"
+										class="items-centergap-2 mt-2 flex gap-2 border border-red-400 bg-red-400 p-2 font-2 font-semibold text-white transition-colors hover:cursor-pointer hover:bg-white hover:text-red-400"
 									>
 										<span class="material-symbols-outlined">logout</span>
 										{member.id === data.user.id ? 'Opustit skupinu' : 'Odstranit ze skupiny'}

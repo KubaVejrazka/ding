@@ -19,6 +19,7 @@ export const actions: Actions = {
     try {
       await db.update(user).set({ phone: "420" + phone }).where(eq(user.id, event.locals.user!.id))
     } catch (error) {
+      console.error("Error updating phone number (" + event.locals.user?.phone + "): ", error)
       return fail(500);
     }
 
