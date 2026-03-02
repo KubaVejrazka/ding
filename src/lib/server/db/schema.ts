@@ -10,7 +10,7 @@ export const group = sqliteTable("group", {
 
 export const invite = sqliteTable("invite", {
   token: text("token").primaryKey(),
-  email: text("email").notNull(),
+  email: text("email").notNull(), // email prijemce pozvanky
   groupId: text("group_id").notNull(),
   used: integer("used", { mode: "boolean" })
 })
@@ -32,13 +32,13 @@ export const user = sqliteTable("user", {
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
   phone: text("phone").notNull().unique(),
-  groupId: text("group_id").references((): any => group.id),
-  welcomeMessageSent: integer("welcome_message_sent", { mode: "boolean" })
+  groupId: text("group_id").references((): any => group.id), // reference na skupinu, ve ktere je uzivatel clenem
+  welcomeMessageSent: integer("welcome_message_sent", { mode: "boolean" }) // boolean urcijici, zda uzivateli jiz byla poslana privitaci SMS
     .default(false)
     .notNull(),
-  latestMessage: text("latest_message"),
-  latestMessageTime: integer("latest_message_time", { mode: "timestamp_ms" }),
-  credit: integer("credit").default(10).notNull(),
+  latestMessage: text("latest_message"), // obsah posledni zpravy odeslane uzivatelem
+  latestMessageTime: integer("latest_message_time", { mode: "timestamp_ms" }), // cas posledni zpravy odeslane uzivatelem
+  credit: integer("credit").default(10).notNull(), // zustatek uzivatele
 });
 
 export const session = sqliteTable(
