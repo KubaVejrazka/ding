@@ -1,3 +1,77 @@
+// AI generated template
+#let title_page(
+  school: "Gymnázium, Praha 6, Arabská 14",
+  course: "předmět Programování, vyučující Tomáš Obdržálek",
+  title: "Elektronický systém sledování myší",
+  subtitle: "ročníkový projekt",
+  author: "Jan Novák, 1E",
+  date: "květen 2011",
+  logo: none,
+  illustration: none,
+  body,
+) = {
+  set page(paper: "a4", margin: (
+    left: 3cm,
+    right: 3cm,
+    top: 2.5cm,
+    bottom: 2.5cm,
+  ))
+  set text(font: "New Computer Modern", lang: "cs")
+  grid(
+    columns: (auto, 1fr),
+    gutter: 1cm,
+    align(horizon)[
+      #if logo != none {
+        image(logo, height: 2cm)
+      } else {
+        box(width: 2cm, height: 2cm, stroke: 1pt + gray, radius: 2pt)[
+          #set align(center + horizon)
+          #text(size: 8pt, fill: gray)[Logo]
+        ]
+      }
+    ],
+    align(horizon)[
+      #text(size: 14pt)[#school]\
+      #v(0.3em, weak: true)
+      #text(size: 12pt)[#course]
+    ],
+  )
+  v(1fr)
+  align(center)[
+    #text(size: 26pt, weight: "bold")[#title]\
+    #v(1em)
+    #text(size: 16pt)[#subtitle]\
+    #v(3cm)
+    #if illustration != none {
+      image(illustration, width: 50%)
+    } else {
+      box(width: 50%, height: 5cm, stroke: 1pt + gray, radius: 2pt)[
+        #set align(center + horizon)
+        #text(size: 10pt, fill: gray)[Ilustrace myši]
+      ]
+    }
+  ]
+  v(1fr)
+  grid(
+    columns: (1fr, 1fr),
+    align(left)[#text(size: 14pt)[#author]],
+    align(right)[#text(size: 14pt)[#date]],
+  )
+  pagebreak()
+  body
+}
+
+#show: title_page.with(
+  school: "Gymnázium, Praha 6, Arabská 14",
+  course: "předmět Programování, vyučující Daniel Kahoun",
+  title: "Systém pro skupinovou komunikaci přes SMS",
+  subtitle: "Ročníkový projekt",
+  author: "Jakub Vejražka, 4.E",
+  date: "Únor 2026",
+  logo: "images/gyarab.png",
+  illustration: "images/forum.png",
+)
+
 #table(
   stroke: none,
   columns: (2fr, 3fr),
