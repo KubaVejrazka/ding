@@ -465,6 +465,11 @@ Aplikace momentálně uživatelům umožňuje být pouze v jedné skupině, při
 telefonních čísel by bylo možné ji vylepšit tak, aby jeden uživatel mohl být v několika skupinách
 zároveň.
 
+= Závěr
+Ačkoliv aplikace stále má nějaké nedostatky, je v principu funkční a splnil jsem všechny své hlavní cíle. Obzvlášť s ohledem na to, kolik komplikací jsem měl během komunikace s SMS bránami a migrování mezi nimi, a také že se mi během práce na projektu porouchal počítač, což mi na víc než týden komplentě znemožnilo se mu nějak víc věnovat, myslím, že jsem odvedl dobrou práci.
+
+Do SOČ ale určitě chci ještě udělat nějaká vylepšení.
+
 #outline(
   title: [Obrázky a výstřižky kódu],
   target: figure,
