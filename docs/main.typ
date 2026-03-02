@@ -465,6 +465,11 @@ Aplikace momentálně uživatelům umožňuje být pouze v jedné skupině, při
 telefonních čísel by bylo možné ji vylepšit tak, aby jeden uživatel mohl být v několika skupinách
 zároveň.
 
+#outline(
+  title: [Obrázky a výstřižky kódu],
+  target: figure,
+)
+
 #bibliography(
   "sources.bib",
   title: [Zdroje],
