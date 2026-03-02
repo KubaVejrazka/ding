@@ -48,7 +48,6 @@ export const actions: Actions = {
             "application_token": env.BULKGATE_TOKEN,
             "number": event.locals.user.phone,
             "text": "Vita Vas Ding :)",
-            "unicode": "true",
             "country": "cz"
           })
         });
