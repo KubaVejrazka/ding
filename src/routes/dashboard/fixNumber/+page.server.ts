@@ -1,28 +1,36 @@
-import { db } from "$lib/server/db";
-import { user } from "$lib/server/db/schema";
-import { fail, redirect, type Actions } from "@sveltejs/kit";
-import { eq } from "drizzle-orm";
-import type { PageServerLoad } from "./$types";
+import { db } from '$lib/server/db';
+import { user } from '$lib/server/db/schema';
+import { fail, redirect, type Actions } from '@sveltejs/kit';
+import { eq } from 'drizzle-orm';
+import type { PageServerLoad } from './$types';
+import { isValidCzechPhone } from '$lib/utils/phone';
 
 export const load: PageServerLoad = async (event) => {
-  if (event.locals.user?.welcomeMessageSent) return redirect(302, '/dashboard')
-}
+	if (event.locals.user?.welcomeMessageSent) return redirect(302, '/dashboard');
+};
 
 export const actions: Actions = {
-  fixPhone: async (event) => {
-    if (event.locals.user?.welcomeMessageSent) return redirect(302, '/dashboard')
+	fixPhone: async (event) => {
+		const currentUser = event.locals.user;
+		if (currentUser?.welcomeMessageSent) return redirect(302, '/dashboard');
 
-    const formData = await event.request.formData();
-    const phone = formData.get('phone')?.toString() ?? '';
-    if (!(/^[0-9]{9}$/.test(phone)) || event.locals.user?.welcomeMessageSent) return fail(400, { code: 'INVALID_PHONE' });
+		const formData = await event.request.formData();
+		const phone = formData.get('phone')?.toString() ?? '';
 
-    try {
-      await db.update(user).set({ phone: "420" + phone }).where(eq(user.id, event.locals.user!.id))
-    } catch (error) {
-      console.error("Error updating phone number (" + event.locals.user?.phone + "): ", error)
-      return fail(500);
-    }
+		if (!isValidCzechPhone(phone)) {
+			return fail(400, { code: 'INVALID_PHONE' });
+		}
 
-    return redirect(302, '/dashboard')
-  }
-}
+		try {
+			await db
+				.update(user)
+				.set({ phone: '420' + phone })
+				.where(eq(user.id, currentUser!.id));
+		} catch (error) {
+			console.error(`Error updating phone number (for ${currentUser?.email}):`, error);
+			return fail(500);
+		}
+
+		return redirect(302, '/dashboard');
+	}
+};

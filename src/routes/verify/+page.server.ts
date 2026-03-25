@@ -1,23 +1,43 @@
-import { redirect, type Actions } from "@sveltejs/kit";
-import type { PageServerLoad } from "../$types";
-import { auth } from "$lib/server/auth";
+import { fail, redirect, type Actions } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
+import { auth } from '$lib/server/auth';
 
 export const load: PageServerLoad = async (event) => {
-  if (event.locals.user?.emailVerified) return redirect(302, '/dashboard');
-  return {};
-}
+	if (event.locals.user?.emailVerified) return redirect(302, '/dashboard');
+	return {};
+};
 
 export const actions: Actions = {
-  sendVerificationEmail: async (event) => {
-    if (event.locals.user) {
-      await auth.api.sendVerificationEmail({
-        body: {
-          email: event.locals.user!.email,
-          callbackURL: '/dashboard'
-        },
-        headers: event.request.headers
-      });
-      console.log("User " + event.locals.user.name + " (" + event.locals.user.email + ") requested another verification email.")
-    }
-  }
-}
+	sendVerificationEmail: async (event) => {
+		const currentUser = event.locals.user;
+		if (!currentUser) return redirect(302, '/');
+
+		// 1. Rate Limiting (60 seconds)
+		const now = Date.now();
+		if (currentUser.lastRateLimitAt && now - currentUser.lastRateLimitAt.getTime() < 60000) {
+			return fail(429, { message: 'Too many requests' });
+		}
+
+		try {
+			await auth.api.sendVerificationEmail({
+				body: {
+					email: currentUser.email,
+					callbackURL: '/dashboard'
+				},
+				headers: event.request.headers
+			});
+
+			// Update timestamp to rate limit next request
+			await db
+				.update(user)
+				.set({ lastRateLimitAt: new Date() })
+				.where(eq(user.id, currentUser.id));
+
+			console.log(`User ${currentUser.name} (${currentUser.email}) requested another verification email.`);
+			return { success: true };
+		} catch (error) {
+			console.error(`Error resending verification email for ${currentUser.email}:`, error);
+			return fail(500);
+		}
+	}
+};

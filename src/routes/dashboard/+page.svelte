@@ -1,54 +1,45 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
-	import { onMount } from 'svelte';
+	import { formatPhoneNumber } from '$lib/utils/phone';
+	import MemberListItem from '$lib/components/dashboard/MemberListItem.svelte';
+	import LatestMessageCard from '$lib/components/dashboard/LatestMessageCard.svelte';
+
 	let { data } = $props();
 
 	let expandedIndex = $state(-1);
-
 	let showReplySentButton = $state(true);
 	let errorMessage = $state('');
-	let phoneString = $state('');
-
-	// svelte-ignore non_reactive_update
-	let checkForReplyForm: HTMLFormElement;
 	let checkingForReply = $state(false);
 
-	function checkForReply() {
-		let i = 1;
-		if (checkForReplyForm) {
-			const interval = setInterval(() => {
-				if (!checkingForReply) return;
-				console.log('Reply check...');
-				checkForReplyForm.requestSubmit();
-				i++;
+	let checkForReplyForm = $state<HTMLFormElement>();
+
+	const phoneString = $derived(data.user ? formatPhoneNumber(data.user.phone) : '');
+
+	function startReplyCheck() {
+		let i = 0;
+		const interval = setInterval(() => {
+			if (!checkingForReply || i >= 10) {
+				clearInterval(interval);
 				if (i >= 10) {
-					clearInterval(interval);
 					errorMessage =
 						'Vaše zpráva zatím nepřišla. Zkuste za chvíli stisknout tlačítko znovu, pokud to nepomůže, pošlete novou zprávu. Ujistěte se, že odpovídáte správnému číslu a že před číslem příjemce máte předvolbu +420.';
 					checkingForReply = false;
 					showReplySentButton = true;
 				}
-			}, 1000);
-		}
+				return;
+			}
+			console.log('Reply check...');
+			checkForReplyForm.requestSubmit();
+			i++;
+		}, 1000);
 	}
-
-	onMount(() => {
-		phoneString =
-			'+' +
-			data.user!.phone.slice(0, 3) +
-			' ' +
-			data.user!.phone.slice(3, 6) +
-			' ' +
-			data.user!.phone.slice(6, 9) +
-			' ' +
-			data.user!.phone.slice(9, 12);
-	});
 </script>
 
 <div class="m-4 grid gap-4 md:grid-cols-2">
 	<div class="h-min border bg-white p-4">
 		{#if !data.user?.welcomeMessageSent}
+			<!-- STEP 1: WELCOME MESSAGE -->
 			<h2 class="mb-8 font-2 text-2xl font-semibold">Vytvořte si kontakt</h2>
 			<p class="text-justify">
 				Poslední krok, než budete moci začít využívat SMS skupiny, je ověření telefonního čísla a
@@ -64,8 +55,8 @@
 
 			<form
 				use:enhance={() => {
-					return async ({ result, update }) => {
-						if (result) await update();
+					return async ({ update }) => {
+						await update();
 					};
 				}}
 				action="?/welcomeMessage"
@@ -73,18 +64,21 @@
 			>
 				<button
 					class="h-12 w-full border bg-black font-2 font-semibold text-white transition-colors hover:cursor-pointer hover:bg-white hover:text-black"
-					>Odeslat přivítací SMS</button
 				>
+					Odeslat přivítací SMS
+				</button>
 			</form>
 
 			<p class="mt-8 text-justify">
 				Číslo je špatně? <a
 					href="/dashboard/fixNumber"
 					class="text-start text-red-400 underline hover:cursor-pointer"
-					>Klikněte sem a opravte ho.</a
 				>
+					Klikněte sem a opravte ho.
+				</a>
 			</p>
-		{:else if !data.user.latestMessage}
+		{:else if !data.user.lastMessageContent}
+			<!-- STEP 2: FIRST REPLY -->
 			<h2 class="mb-8 font-2 text-2xl font-semibold">Pošlete svou první zprávu</h2>
 			<p class="text-justify">
 				Měli byste za chvíli dostat přivítací SMS. Pokud do několika minut nedorazí, prosím, <a
@@ -133,11 +127,12 @@
 							checkingForReply = true;
 							errorMessage = '';
 							checkForReplyForm.requestSubmit();
-							checkForReply();
+							startReplyCheck();
 						}}
 						class="mt-8 h-12 w-full border bg-black font-2 font-semibold text-white transition-colors hover:cursor-pointer hover:bg-white hover:text-black"
-						>Odeslal/a jsem odpověď</button
 					>
+						Odeslal/a jsem odpověď
+					</button>
 				{/if}
 			</form>
 
@@ -154,6 +149,7 @@
 				</p>
 			{/if}
 		{:else}
+			<!-- STEP 3: MAIN DASHBOARD -->
 			<h2 class="mb-8 font-2 text-2xl font-semibold">Moje skupina</h2>
 			{#if !data.group}
 				<p>
@@ -174,71 +170,36 @@
 						<a href="/dashboard/manageGroup" class="text-red-400 underline">Spravovat skupinu</a>
 					{/if}
 				</div>
-				<hr />
-				<h4 class="mt-4">
+				<hr class="my-4 border-t-gray-200" />
+				<h4 class="mt-4 font-semibold">
 					Seznam členů ({data.group.users.length}):
 				</h4>
-				<ul class="ml-4">
+				<ul class="mt-2 divide-y divide-gray-100">
 					{#each data.group.users as member, i}
-						{#if i !== 0}
-							<hr class="mt-2 border-t-gray-100" />
-						{/if}
-						<li class="mt-2 flex items-center justify-between">
-							<div class="flex flex-col">
-								<span class="font-semibold">{member.name}</span>
-								<span class="text-xs">{member.email}</span>
-							</div>
-							{#if (data.user.id === data.group.ownerId && member.id !== data.user.id) || (data.user.id !== data.group.ownerId && member.id === data.user.id)}
-								<div>
-									<button
-										class="flex items-center hover:cursor-pointer"
-										onclick={() => (expandedIndex = i === expandedIndex ? -1 : i)}
-									>
-										<span class="material-symbols-outlined">more_vert</span>
-									</button>
-								</div>
-							{/if}
-						</li>
-						<div
-							class="flex justify-end transition-transform {expandedIndex === i
-								? 'scale-y-100'
-								: 'scale-y-0'}"
-						>
-							<form
-								use:enhance={() => {
-									return async ({ update }) => {
-										await update();
-									};
-								}}
-								method="POST"
-								action="?/removeFromGroup"
-							>
-								<input type="hidden" name="id" value={member.id} />
-								{#if expandedIndex === i}
-									<button
-										class="items-centergap-2 mt-2 flex gap-2 border border-red-400 bg-red-400 p-2 font-2 font-semibold text-white transition-colors hover:cursor-pointer hover:bg-white hover:text-red-400"
-									>
-										<span class="material-symbols-outlined">logout</span>
-										{member.id === data.user.id ? 'Opustit skupinu' : 'Odstranit ze skupiny'}
-									</button>
-								{/if}
-							</form>
-						</div>
+						<MemberListItem
+							{member}
+							currentUser={data.user}
+							isOwner={data.user.id === data.group.ownerId}
+							expanded={expandedIndex === i}
+							ontoggle={() => (expandedIndex = expandedIndex === i ? -1 : i)}
+						/>
 					{/each}
 				</ul>
 				{#if data.user.id === data.group.ownerId}
 					<button
-						class="mt-4 h-12 w-full border bg-black font-2 font-semibold text-white transition-colors hover:cursor-pointer hover:bg-white hover:text-black"
+						class="mt-8 h-12 w-full border bg-black font-2 font-semibold text-white transition-colors hover:cursor-pointer hover:bg-white hover:text-black"
 						onclick={() => goto('/dashboard/addMember')}>Pozvat nového člena</button
 					>
 				{/if}
 
 				<h4 class="mt-8">Aktuální cena za zprávu:</h4>
-				<span class="text-4xl">{(data.group.users.length - 1) * 2} Kč</span>
+				<span class="text-4xl font-semibold">{(data.group.users.length - 1) * 2} Kč</span>
 			{/if}
 		{/if}
 	</div>
+
 	<div class="flex flex-col gap-4">
+		<!-- CREDIT -->
 		<div class="border bg-white p-4">
 			<h2 class="mb-8 font-2 text-2xl font-semibold">Váš kredit</h2>
 			<p class="mb-8 text-justify">
@@ -247,13 +208,15 @@
 				další lidé, platíte za každou zprávu 6 Kč (3×2).
 			</p>
 			<h4 class="text-lg font-semibold">Váš kredit:</h4>
-			<span class="text-6xl">{data.user?.credit} Kč</span>
+			<span class="text-6xl font-semibold">{data.user?.credit} Kč</span>
 
 			<p class="mt-8 text-center text-gray-500">
 				Služba je v testovacím režimu a kredit momentálně nelze dobíjet. Administrátoři a ověření
 				testeři ale můžou do mínusu :)
 			</p>
 		</div>
+
+		<!-- LATEST MESSAGE -->
 		<div class="border bg-white p-4">
 			<h2 class="mb-8 font-2 text-2xl font-semibold">Poslední doručená SMS</h2>
 			<p class="mb-8 text-justify">
@@ -261,19 +224,13 @@
 				jste nějakou zprávu odeslali před víc než minutou a stále ji po stisknutí tlačítka níže
 				nevidíte, zkontrolujte, že splňuje všechny podmínky a zkuste to, prosím, znovu.
 			</p>
-			{#if data.user?.latestMessage}
-				<div
-					class="mx-auto flex min-h-32 flex-col justify-between rounded-xl border border-red-400 bg-red-50 p-4 lg:w-1/2"
-				>
-					<p class="font-2 text-lg text-red-400">{data.user?.latestMessage}</p>
-					<span class="mt-2 text-end text-xs text-red-400"
-						>{data.user?.latestMessageTime.getDate()}.{data.user?.latestMessageTime.getMonth()! +
-							1}. {data.user?.latestMessageTime.getHours()}:{data.user?.latestMessageTime
-							.getMinutes()
-							.toString()
-							.padStart(2, '0')}</span
-					>
-				</div>
+
+			<LatestMessageCard
+				message={data.user?.lastMessageContent}
+				time={data.user?.lastMessageReceivedAt}
+			/>
+
+			{#if data.user?.lastMessageContent}
 				<form
 					use:enhance={() => {
 						checkingForReply = true;
@@ -290,8 +247,9 @@
 					{#if !checkingForReply}
 						<button
 							class="mt-8 h-12 w-full border bg-black font-2 font-semibold text-white transition-colors hover:cursor-pointer hover:bg-white hover:text-black"
-							>Znovu načíst</button
 						>
+							Znovu načíst
+						</button>
 					{:else}
 						<div class="mt-8 flex items-center justify-center p-4">
 							<img src="/spinner.svg" alt="Načítám..." class="mr-2 size-6 animate-spin" />
@@ -299,8 +257,6 @@
 						</div>
 					{/if}
 				</form>
-			{:else}
-				<p class="text-center text-gray-500">Zatím nebyla doručena žádná vaše zpráva.</p>
 			{/if}
 		</div>
 	</div>

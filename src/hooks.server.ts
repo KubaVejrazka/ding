@@ -3,27 +3,40 @@ import { building } from '$app/environment';
 import { auth } from '$lib/server/auth';
 import { svelteKitHandler } from 'better-auth/svelte-kit';
 
-const handleBetterAuth: Handle = async ({ event, resolve }) => {
-  const session = await auth.api.getSession({ headers: event.request.headers });
+export const handle: Handle = async ({ event, resolve }) => {
+	const session = await auth.api.getSession({ headers: event.request.headers });
 
-  if (session) {
-    event.locals.session = session.session;
-    event.locals.user = session.user;
-  }
+	if (session) {
+		event.locals.session = session.session;
+		event.locals.user = session.user;
+	}
 
-  if (
-    !event.locals.user &&
-    event.url.pathname !== '/' &&
-    !event.url.pathname.startsWith('/api')
-  ) return redirect(302, '/');
-  else if (
-    event.url.pathname !== '/' &&
-    event.url.pathname !== '/verify' &&
-    !event.locals.user?.emailVerified &&
-    !event.url.pathname.startsWith('/api')
-  ) return redirect(302, '/verify')
+	const { pathname } = event.url;
 
-  return svelteKitHandler({ event, resolve, auth, building });
+	// 1. Allow public routes
+	const isPublicRoute =
+		pathname === '/' || pathname.startsWith('/api/auth') || pathname === '/api/sms/receive';
+
+	if (isPublicRoute) {
+		// If user is logged in and tries to go to login page, redirect to dashboard
+		if (pathname === '/' && event.locals.user) {
+			throw redirect(302, '/dashboard');
+		}
+		return svelteKitHandler({ event, resolve, auth, building });
+	}
+
+	// 2. Protect all other routes
+	if (!event.locals.user) {
+		throw redirect(302, '/');
+	}
+
+	// 3. Email verification check (except for /verify and logout)
+	const isVerifyRoute = pathname === '/verify';
+	const isSignOut = pathname === '/' && event.request.method === 'POST'; // Signout action is on /
+
+	if (!event.locals.user.emailVerified && !isVerifyRoute && !isSignOut && !pathname.startsWith('/api')) {
+		throw redirect(302, '/verify');
+	}
+
+	return svelteKitHandler({ event, resolve, auth, building });
 };
-
-export const handle: Handle = handleBetterAuth;

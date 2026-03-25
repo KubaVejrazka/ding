@@ -1,94 +1,96 @@
-import { env } from "$env/dynamic/private";
-import { fail, type Actions } from "@sveltejs/kit";
-import { db } from "$lib/server/db";
-import { eq } from "drizzle-orm";
-import { user } from "$lib/server/db/schema";
-import type { PageServerLoad } from "./$types";
-
-const disableSMS = env.DISABLE_SMS === "true";
+import { fail, type Actions } from '@sveltejs/kit';
+import { db } from '$lib/server/db';
+import { eq } from 'drizzle-orm';
+import { user } from '$lib/server/db/schema';
+import type { PageServerLoad } from './$types';
+import { sendWelcomeMessage } from '$lib/server/services/sms';
 
 export const load: PageServerLoad = async ({ locals }) => {
-  if (locals.user?.groupId) {
-    const group = await db.query.group.findFirst({
-      where: (group, { eq }) => eq(group.id, locals.user!.groupId),
-      with: {
-        users: {
-          columns: {
-            name: true,
-            email: true,
-            id: true
-          }
-        }
-      },
-      columns: {
-        name: true,
-        ownerId: true
-      }
-    });
-    return { group };
-  }
-}
+	if (locals.user?.groupId) {
+		const group = await db.query.group.findFirst({
+			where: (group, { eq }) => eq(group.id, locals.user!.groupId),
+			with: {
+				users: {
+					columns: {
+						name: true,
+						email: true,
+						id: true
+					}
+				}
+			},
+			columns: {
+				name: true,
+				ownerId: true
+			}
+		});
+		return { group };
+	}
+};
 
 export const actions: Actions = {
-  welcomeMessage: async (event) => {
-    if (!event.locals.user?.emailVerified || event.locals.user.welcomeMessageSent) {
-      return fail(400);
-    }
+	welcomeMessage: async (event) => {
+		const currentUser = event.locals.user;
+		// 1. Authorization & State Check
+		if (!currentUser?.emailVerified || currentUser.welcomeMessageSent) {
+			return fail(400, { message: 'Already sent or not verified' });
+		}
 
-    try {
-      if (!disableSMS) {
-        console.log("Sending welcome SMS to " + event.locals.user.email)
-        const response = await event.fetch('https://portal.bulkgate.com/api/1.0/simple/transactional', {
-          method: 'POST',
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            "application_id": env.BULKGATE_ID,
-            "application_token": env.BULKGATE_TOKEN,
-            "number": event.locals.user.phone,
-            "text": "Vita Vas Ding :)",
-            "country": "cz"
-          })
-        });
+		// 2. Rate Limiting (Extra safety, though welcomeMessageSent should cover it)
+		const now = Date.now();
+		if (currentUser.lastRateLimitAt && now - currentUser.lastRateLimitAt.getTime() < 60000) {
+			return fail(429, { message: 'Please wait a minute' });
+		}
 
-        if (!response.ok) {
-          const errorDetails = await response.text();
-          console.error("Failed to send message (API rejection):", errorDetails);
-          return fail(response.status);
-        } else {
-          await db.update(user).set({ welcomeMessageSent: true }).where(eq(user.id, event.locals.user!.id));
-        }
-      } else {
-        console.log("Fake sending welcome message to " + event.locals.user.email)
-        await db.update(user).set({ welcomeMessageSent: true }).where(eq(user.id, event.locals.user!.id));
-      }
-    } catch (error) {
-      console.log(error);
-      return fail(500);
-    }
-  },
+		const result = await sendWelcomeMessage(currentUser.phone);
 
-  checkForReply: async (event) => {
-    if (!event.locals.user?.latestMessage) return fail(400)
-  },
+		if (result.success) {
+			await db
+				.update(user)
+				.set({
+					welcomeMessageSent: true,
+					lastRateLimitAt: new Date()
+				})
+				.where(eq(user.id, currentUser.id));
+			return { success: true };
+		}
+ else {
+			return fail(result.status || 500);
+		}
+	},
 
-  removeFromGroup: async (event) => {
-    const formData = await event.request.formData();
-    const uid = formData.get('id')?.toString()
+	checkForReply: async (event) => {
+		// This action is mainly used to trigger a data reload in the client.
+		// SvelteKit re-runs the load function on every successful action.
+		if (!event.locals.user?.lastMessageContent) return fail(400);
+		return { success: true };
+	},
 
-    if (uid) {
-      const targetUser = await db.query.user.findFirst({
-        where: (user, { eq }) => eq(user.id, uid),
-        with: {
-          group: true
-        }
-      });
-      if (targetUser?.groupId === event.locals.user?.groupId && uid !== targetUser?.group?.ownerId) {
-        await db.update(user).set({
-          groupId: null
-        }).where(eq(user.id, uid))
-      }
-    }
-  }
+	removeFromGroup: async (event) => {
+		const formData = await event.request.formData();
+		const uid = formData.get('id')?.toString();
+		const currentUser = event.locals.user;
+
+		if (uid && currentUser) {
+			const targetUser = await db.query.user.findFirst({
+				where: (u, { eq }) => eq(u.id, uid),
+				with: {
+					group: true
+				}
+			});
+
+			// Only allow removal if:
+			// 1. Target user is in the same group as current user
+			// 2. Target user is not the owner of that group
+			if (targetUser?.groupId === currentUser.groupId && uid !== targetUser?.group?.ownerId) {
+				await db
+					.update(user)
+					.set({
+						groupId: null
+					})
+					.where(eq(user.id, uid));
+				return { success: true };
+			}
+		}
+		return fail(400);
+	}
 };
