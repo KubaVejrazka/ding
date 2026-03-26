@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { formatPhoneNumber } from '$lib/utils/phone';
 	import MemberListItem from '$lib/components/dashboard/MemberListItem.svelte';
 	import LatestMessageCard from '$lib/components/dashboard/LatestMessageCard.svelte';
@@ -12,13 +12,11 @@
 	let errorMessage = $state('');
 	let checkingForReply = $state(false);
 
-	let checkForReplyForm = $state<HTMLFormElement>();
-
 	const phoneString = $derived(data.user ? formatPhoneNumber(data.user.phone) : '');
 
 	function startReplyCheck() {
 		let i = 0;
-		const interval = setInterval(() => {
+		const interval = setInterval(async () => {
 			if (!checkingForReply || i >= 10) {
 				clearInterval(interval);
 				if (i >= 10) {
@@ -30,7 +28,13 @@
 				return;
 			}
 			console.log('Reply check...');
-			checkForReplyForm?.requestSubmit();
+			await invalidateAll();
+
+			if (data.user?.lastMessageContent) {
+				clearInterval(interval);
+				checkingForReply = false;
+			}
+
 			i++;
 		}, 1000);
 	}
@@ -102,39 +106,25 @@
 				Pokud pošlete zprávu, která bude obsahovat speciální znaky, přijde ostatním členům skupiny
 				upravená (např. Á bude změněno na A apod.). Smajlíci se změní v nečitelné sekvence znaků,
 				nepoužívejte je. Pokud přesáhnete 140 znaků, vaše zpráva nebude ostatním členům skupiny
-				doručena vůbec.
+				doručen vůbec.
 				<br /><br />
 				Po odeslání odpovědi stiskněte tlačítko níže.
 			</p>
-			<form
-				use:enhance={() => {
-					return async ({ result, update }) => {
-						if (result.type === 'success') {
-							checkingForReply = false;
-							await update();
-						}
-					};
-				}}
-				action="?/checkForReply"
-				method="POST"
-				bind:this={checkForReplyForm}
-			>
-				{#if showReplySentButton}
-					<button
-						type="button"
-						onclick={() => {
-							showReplySentButton = false;
-							checkingForReply = true;
-							errorMessage = '';
-							checkForReplyForm?.requestSubmit();
-							startReplyCheck();
-						}}
-						class="mt-8 h-12 w-full border bg-black font-2 font-semibold text-white transition-colors hover:cursor-pointer hover:bg-white hover:text-black"
-					>
-						Odeslal/a jsem odpověď
-					</button>
-				{/if}
-			</form>
+
+			{#if showReplySentButton}
+				<button
+					type="button"
+					onclick={() => {
+						showReplySentButton = false;
+						checkingForReply = true;
+						errorMessage = '';
+						startReplyCheck();
+					}}
+					class="mt-8 h-12 w-full border bg-black font-2 font-semibold text-white transition-colors hover:cursor-pointer hover:bg-white hover:text-black"
+				>
+					Odeslal/a jsem odpověď
+				</button>
+			{/if}
 
 			{#if checkingForReply}
 				<div class="flex h-32 items-center justify-center p-4">

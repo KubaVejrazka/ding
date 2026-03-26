@@ -1,15 +1,12 @@
 import { fail, redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { db } from '$lib/server/db';
-import { inviteUser } from '$lib/server/services/group';
+import { inviteUser, getOwnedGroup } from '$lib/server/services/group';
 
 export const load: PageServerLoad = async (event) => {
 	const currentUser = event.locals.user;
 	if (!currentUser?.groupId) return redirect(302, '/dashboard');
 
-	const ownedGroup = await db.query.group.findFirst({
-		where: (group, { eq }) => eq(group.ownerId, currentUser.id)
-	});
+	const ownedGroup = await getOwnedGroup(currentUser.id);
 
 	if (!ownedGroup) return redirect(302, '/dashboard');
 };
@@ -19,10 +16,7 @@ export const actions: Actions = {
 		const currentUser = event.locals.user;
 		if (!currentUser?.groupId) return redirect(302, '/dashboard');
 
-		const ownedGroup = await db.query.group.findFirst({
-			where: (group, { eq }) => eq(group.ownerId, currentUser.id),
-			with: { users: true }
-		});
+		const ownedGroup = await getOwnedGroup(currentUser.id);
 
 		if (!ownedGroup) return redirect(302, '/dashboard');
 

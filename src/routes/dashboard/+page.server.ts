@@ -4,6 +4,7 @@ import { eq } from 'drizzle-orm';
 import { user } from '$lib/server/db/schema';
 import type { PageServerLoad } from './$types';
 import { sendWelcomeMessage } from '$lib/server/services/sms';
+import { removeUserFromGroup } from '$lib/server/services/group';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const groupId = locals.user?.groupId;
@@ -53,42 +54,20 @@ export const actions: Actions = {
 				})
 				.where(eq(user.id, currentUser.id));
 			return { success: true };
-		}
- else {
+		} else {
 			return fail(result.status || 500);
 		}
-	},
+		},
 
-	checkForReply: async (event) => {
-		// This action is mainly used to trigger a data reload in the client.
-		// SvelteKit re-runs the load function on every successful action.
-		if (!event.locals.user?.lastMessageContent) return fail(400);
-		return { success: true };
-	},
+		removeFromGroup: async (event) => {
 
-	removeFromGroup: async (event) => {
 		const formData = await event.request.formData();
 		const uid = formData.get('id')?.toString();
 		const currentUser = event.locals.user;
 
-		if (uid && currentUser) {
-			const targetUser = await db.query.user.findFirst({
-				where: (u, { eq }) => eq(u.id, uid),
-				with: {
-					group: true
-				}
-			});
-
-			// Only allow removal if:
-			// 1. Target user is in the same group as current user
-			// 2. Target user is not the owner of that group
-			if (targetUser?.groupId === currentUser.groupId && uid !== targetUser?.group?.ownerId) {
-				await db
-					.update(user)
-					.set({
-						groupId: null
-					})
-					.where(eq(user.id, uid));
+		if (uid && currentUser?.groupId) {
+			const result = await removeUserFromGroup(currentUser.id, uid, currentUser.groupId);
+			if (result.success) {
 				return { success: true };
 			}
 		}

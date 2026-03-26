@@ -5,6 +5,24 @@ import transporter from '$lib/server/mail';
 import { env } from '$env/dynamic/private';
 
 /**
+ * Fetches a group owned by a specific user.
+ */
+export async function getOwnedGroup(ownerId: string) {
+	return db.query.group.findFirst({
+		where: (group, { eq }) => eq(group.ownerId, ownerId),
+		with: {
+			users: {
+				columns: {
+					name: true,
+					email: true,
+					id: true
+				}
+			}
+		}
+	});
+}
+
+/**
  * Creates a new group and assigns the owner.
  */
 export function createGroup(name: string, ownerId: string) {
