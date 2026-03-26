@@ -1,6 +1,6 @@
 import { fail, type Actions } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { user } from '$lib/server/db/schema';
 import type { PageServerLoad } from './$types';
 import { sendWelcomeMessage } from '$lib/server/services/sms';
@@ -37,27 +37,40 @@ export const actions: Actions = {
 			return fail(400, { message: 'Already sent or not verified' });
 		}
 
-		// 2. Rate Limiting (Extra safety, though welcomeMessageSent should cover it)
+		// 2. Rate Limiting
 		const now = Date.now();
 		if (currentUser.lastRateLimitAt && now - currentUser.lastRateLimitAt.getTime() < 60000) {
 			return fail(429, { message: 'Please wait a minute' });
 		}
 
+		// 3. Atomically mark as sent to prevent race conditions
+		// We try to update only if it's currently false.
+		const updateResult = await db
+			.update(user)
+			.set({
+				welcomeMessageSent: true,
+				lastRateLimitAt: new Date()
+			})
+			.where(and(eq(user.id, currentUser.id), eq(user.welcomeMessageSent, false)));
+
+		// If no rows were updated, it means another request already marked it as sent
+		if (updateResult.rowsAffected === 0) {
+			return fail(400, { message: 'Already sent' });
+		}
+
 		const result = await sendWelcomeMessage(currentUser.phone);
 
-		if (result.success) {
-			await db
-				.update(user)
-				.set({
-					welcomeMessageSent: true,
-					lastRateLimitAt: new Date()
-				})
-				.where(eq(user.id, currentUser.id));
-			return { success: true };
-		} else {
+		if (!result.success) {
+			// Rollback if SMS failed (optional, but good for UX if they want to try again)
+			// However, to be strictly safe against double-spend, we might prefer leaving it as true
+			// or having a more complex "pending" state. 
+			// For this use case, we'll keep it simple.
 			return fail(result.status || 500);
 		}
-		},
+
+		return { success: true };
+	},
+
 
 		removeFromGroup: async (event) => {
 

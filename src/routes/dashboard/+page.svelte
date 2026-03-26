@@ -11,6 +11,7 @@
 	let showReplySentButton = $state(true);
 	let errorMessage = $state('');
 	let checkingForReply = $state(false);
+	let submittingWelcome = $state(false);
 
 	const phoneString = $derived(data.user ? formatPhoneNumber(data.user.phone) : '');
 
@@ -59,17 +60,25 @@
 
 			<form
 				use:enhance={() => {
-					return async ({ update }) => {
+					submittingWelcome = true;
+					return async ({ update, result }) => {
 						await update();
+						// Only keep it "submitting" if it actually failed and we want to allow retry
+						// But for this security flow, even on failure we might want to disable it
+						// for a bit or rely on the server's welcomeMessageSent check.
+						if (result.type !== 'success') {
+							submittingWelcome = false;
+						}
 					};
 				}}
 				action="?/welcomeMessage"
 				method="POST"
 			>
 				<button
-					class="h-12 w-full border bg-black font-2 font-semibold text-white transition-colors hover:cursor-pointer hover:bg-white hover:text-black"
+					disabled={submittingWelcome}
+					class="h-12 w-full border bg-black font-2 font-semibold text-white transition-colors hover:cursor-pointer hover:bg-white hover:text-black disabled:cursor-not-allowed disabled:bg-gray-400"
 				>
-					Odeslat přivítací SMS
+					{submittingWelcome ? 'Odesílám...' : 'Odeslat přivítací SMS'}
 				</button>
 			</form>
 
