@@ -83,5 +83,10 @@ export const actions: Actions = {
 			}
 		}
 		return fail(400);
+	},
+
+	checkForReply: async () => {
+		// Just a trigger to re-run the load function via use:enhance
+		return {};
 	}
 };
