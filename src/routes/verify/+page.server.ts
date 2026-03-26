@@ -31,12 +31,11 @@ export const actions: Actions = {
 			});
 
 			// Update timestamp to rate limit next request
-			await db
-				.update(user)
-				.set({ lastRateLimitAt: new Date() })
-				.where(eq(user.id, currentUser.id));
+			await db.update(user).set({ lastRateLimitAt: new Date() }).where(eq(user.id, currentUser.id));
 
-			console.log(`User ${currentUser.name} (${currentUser.email}) requested another verification email.`);
+			console.log(
+				`User ${currentUser.name} (${currentUser.email}) requested another verification email.`
+			);
 			return { success: true };
 		} catch (error) {
 			console.error(`Error resending verification email for ${currentUser.email}:`, error);

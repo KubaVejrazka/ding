@@ -5,7 +5,8 @@ export const AUTH_ERRORS: Record<string, string> = {
 	INVALID_EMAIL_OR_PASSWORD: 'Špatný email nebo heslo.',
 	USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL: 'Uživatel s tímto emailem už existuje.',
 	PASSWORD_TOO_SHORT: 'Heslo je moc krátké.',
-	FAILED_TO_CREATE_USER: 'Něco se nepovedlo. Ujistěte se, že toto telefonní číslo ještě není zaregistrované.',
+	FAILED_TO_CREATE_USER:
+		'Něco se nepovedlo. Ujistěte se, že toto telefonní číslo ještě není zaregistrované.',
 	PASSWORD_MISMATCH: 'Hesla se neshodují.',
 	UNKNOWN: 'Něco se nepovedlo :('
 };

@@ -54,7 +54,7 @@ export const actions: Actions = {
 			.where(and(eq(user.id, currentUser.id), eq(user.welcomeMessageSent, false)));
 
 		// If no rows were updated, it means another request already marked it as sent
-		if (updateResult.rowsAffected === 0) {
+		if (updateResult.changes === 0) {
 			return fail(400, { message: 'Already sent' });
 		}
 
@@ -63,7 +63,7 @@ export const actions: Actions = {
 		if (!result.success) {
 			// Rollback if SMS failed (optional, but good for UX if they want to try again)
 			// However, to be strictly safe against double-spend, we might prefer leaving it as true
-			// or having a more complex "pending" state. 
+			// or having a more complex "pending" state.
 			// For this use case, we'll keep it simple.
 			return fail(result.status || 500);
 		}
@@ -71,9 +71,7 @@ export const actions: Actions = {
 		return { success: true };
 	},
 
-
-		removeFromGroup: async (event) => {
-
+	removeFromGroup: async (event) => {
 		const formData = await event.request.formData();
 		const uid = formData.get('id')?.toString();
 		const currentUser = event.locals.user;

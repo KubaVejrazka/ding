@@ -2,6 +2,7 @@
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import { formatPhoneNumber } from '$lib/utils/phone';
+	import { enhance } from '$app/forms';
 
 	let { children, data } = $props();
 
@@ -46,7 +47,7 @@
 	<!-- Side Navigation -->
 	<div
 		class="fixed top-14 bottom-14 z-10 flex w-64 flex-col items-center bg-white p-4 transition-transform {sidebarOpen
-			? 'border-r translate-x-0'
+			? 'translate-x-0 border-r'
 			: '-translate-x-64'}"
 	>
 		<div class="flex w-full items-center justify-center">
@@ -72,7 +73,7 @@
 			<h4 class="text-center text-sm">{data.user.email}</h4>
 			<h4 class="text-center text-sm">{phoneString}</h4>
 
-			<form action="/?/signOut" method="POST" class="mt-2">
+			<form action="/?/signOut" method="POST" class="mt-2" use:enhance>
 				<button
 					class="mb-2 flex items-center justify-center border border-black bg-black p-2 font-2 font-semibold text-white transition-colors hover:cursor-pointer hover:bg-white hover:text-black"
 				>
@@ -82,8 +83,10 @@
 			</form>
 		</div>
 
-		<div class="mt-4 flex w-full grow items-center justify-center border border-dashed border-gray-300 bg-gray-50 text-gray-400">
-			<span class="text-xs uppercase tracking-widest">Brzy přibude</span>
+		<div
+			class="mt-4 flex w-full grow items-center justify-center border border-dashed border-gray-300 bg-gray-50 text-gray-400"
+		>
+			<span class="text-xs tracking-widest uppercase">Brzy přibude</span>
 		</div>
 	</div>
 

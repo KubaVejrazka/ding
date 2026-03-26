@@ -29,7 +29,7 @@
 				/>
 				<span class="material-symbols-outlined w-10 text-end">phone</span>
 			</div>
-			<p class="mt-2 text-sm text-gray-500 text-justify">
+			<p class="mt-2 text-justify text-sm text-gray-500">
 				Zadejte 9-místné číslo bez mezer. Po odeslání přivítací SMS už nebude možné číslo změnit.
 			</p>
 

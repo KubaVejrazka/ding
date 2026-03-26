@@ -27,7 +27,11 @@
 </li>
 
 {#if canRemove}
-	<div class="flex justify-end transition-transform {expanded ? 'scale-y-100' : 'scale-y-0 h-0 overflow-hidden'}">
+	<div
+		class="flex justify-end transition-transform {expanded
+			? 'scale-y-100'
+			: 'h-0 scale-y-0 overflow-hidden'}"
+	>
 		<form
 			use:enhance={() => {
 				return async ({ update }) => {

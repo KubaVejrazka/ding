@@ -15,7 +15,7 @@ export const actions: Actions = {
 		await auth.api.signOut({
 			headers: event.request.headers
 		});
-		return {};
+		return redirect(302, '/');
 	},
 
 	signIn: async (event) => {

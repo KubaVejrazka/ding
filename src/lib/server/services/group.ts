@@ -37,10 +37,7 @@ export function createGroup(name: string, ownerId: string) {
 			})
 			.run();
 
-		tx.update(user)
-			.set({ groupId: newGroupId })
-			.where(eq(user.id, ownerId))
-			.run();
+		tx.update(user).set({ groupId: newGroupId }).where(eq(user.id, ownerId)).run();
 
 		return { id: newGroupId };
 	});
@@ -88,15 +85,9 @@ export async function joinGroupByToken(token: string, userId: string, userEmail:
 	if (!targetInvite) return { success: false, error: 'invalid invite' };
 
 	db.transaction((tx) => {
-		tx.update(user)
-			.set({ groupId: targetInvite.groupId })
-			.where(eq(user.id, userId))
-			.run();
+		tx.update(user).set({ groupId: targetInvite.groupId }).where(eq(user.id, userId)).run();
 
-		tx.update(invite)
-			.set({ used: true })
-			.where(eq(invite.token, token))
-			.run();
+		tx.update(invite).set({ used: true }).where(eq(invite.token, token)).run();
 	});
 
 	return { success: true, groupId: targetInvite.groupId };
@@ -111,14 +102,12 @@ export async function removeUserFromGroup(userId: string, targetUid: string, gro
 		with: { group: true }
 	});
 
-	if (!targetUser || targetUser.groupId !== groupId) return { success: false, error: 'user not in group' };
+	if (!targetUser || targetUser.groupId !== groupId)
+		return { success: false, error: 'user not in group' };
 	if (targetUser.group?.ownerId === targetUid && userId !== targetUid)
 		return { success: false, error: 'cannot remove owner' };
 
-	await db
-		.update(user)
-		.set({ groupId: null })
-		.where(eq(user.id, targetUid));
+	await db.update(user).set({ groupId: null }).where(eq(user.id, targetUid));
 
 	return { success: true };
 }
@@ -137,15 +126,10 @@ export async function renameGroup(groupId: string, newName: string) {
 export function deleteGroup(groupId: string) {
 	return db.transaction((tx) => {
 		// Remove all users from the group first
-		tx.update(user)
-			.set({ groupId: null })
-			.where(eq(user.groupId, groupId))
-			.run();
+		tx.update(user).set({ groupId: null }).where(eq(user.groupId, groupId)).run();
 
 		// Delete the group
-		tx.delete(group)
-			.where(eq(group.id, groupId))
-			.run();
+		tx.delete(group).where(eq(group.id, groupId)).run();
 
 		return { success: true };
 	});

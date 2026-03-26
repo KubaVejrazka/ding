@@ -2,38 +2,38 @@ name: Deploy to Oracle Cloud VM
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Deploy via SSH
-      uses: appleboy/ssh-action@v1.0.3
-      env:
-        RESET_DB: ${{ vars.RESET_DB }}
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.SSH_KEY }}
-        port: 22
-        envs: RESET_DB
-        script: |
-          cd /home/${{ secrets.USERNAME }}/ding
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          RESET_DB: ${{ vars.RESET_DB }}
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          envs: RESET_DB
+          script: |
+            cd /home/${{ secrets.USERNAME }}/ding
 
-          pm2 stop ding
+            pm2 stop ding
 
-          git reset --hard
-          git pull origin main
+            git reset --hard
+            git pull origin main
 
-          if [ "$RESET_DB" = "true" ]; then
-            echo "CLEARING THE DATABASE"
-            echo "" > ./prod.db
-            npm run db:push -- --force
-          fi
+            if [ "$RESET_DB" = "true" ]; then
+              echo "CLEARING THE DATABASE"
+              echo "" > ./prod.db
+              npm run db:push -- --force
+            fi
 
-          npm install
-          npm run build
+            npm install
+            npm run build
 
-          pm2 start ding
+            pm2 start ding
