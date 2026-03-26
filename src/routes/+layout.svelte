@@ -101,6 +101,8 @@
 	{@render children()}
 </main>
 
+<div class="h-14"></div>
+
 <footer
 	class="fixed bottom-0 z-20 flex h-14 w-full items-center justify-center border-t bg-white p-4"
 >

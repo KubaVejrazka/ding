@@ -30,7 +30,7 @@
 				return;
 			}
 			console.log('Reply check...');
-			checkForReplyForm.requestSubmit();
+			checkForReplyForm?.requestSubmit();
 			i++;
 		}, 1000);
 	}
@@ -126,7 +126,7 @@
 							showReplySentButton = false;
 							checkingForReply = true;
 							errorMessage = '';
-							checkForReplyForm.requestSubmit();
+							checkForReplyForm?.requestSubmit();
 							startReplyCheck();
 						}}
 						class="mt-8 h-12 w-full border bg-black font-2 font-semibold text-white transition-colors hover:cursor-pointer hover:bg-white hover:text-black"

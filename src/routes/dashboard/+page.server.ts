@@ -6,9 +6,10 @@ import type { PageServerLoad } from './$types';
 import { sendWelcomeMessage } from '$lib/server/services/sms';
 
 export const load: PageServerLoad = async ({ locals }) => {
-	if (locals.user?.groupId) {
+	const groupId = locals.user?.groupId;
+	if (groupId) {
 		const group = await db.query.group.findFirst({
-			where: (group, { eq }) => eq(group.id, locals.user!.groupId),
+			where: (group, { eq }) => eq(group.id, groupId),
 			with: {
 				users: {
 					columns: {

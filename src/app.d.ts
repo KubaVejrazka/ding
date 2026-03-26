@@ -8,10 +8,11 @@ declare global {
       user?: User & {
         phone: string,
         welcomeMessageSent: boolean,
-        latestMessage: string,
-        latestMessageTime: Date,
+        lastMessageContent: string | null,
+        lastMessageReceivedAt: Date | null,
+        lastRateLimitAt: Date | null,
         credit: number,
-        groupId: string
+        groupId: string | null
       };
       session?: Session;
     }
