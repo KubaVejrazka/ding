@@ -28,15 +28,28 @@
 
 		<div class="border bg-white p-4">
 			<h2 class="mb-8 font-2 text-2xl font-semibold">Jak to funguje?</h2>
-			<p class="text-justify">
-				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam cursus aliquam risus et
-				malesuada. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus
-				mus. Nunc luctus urna vel ex posuere dignissim. Donec elementum pharetra volutpat. Nulla
-				placerat leo at nunc maximus, feugiat dignissim arcu porta. Nulla porta blandit augue ac
-				finibus. Nullam vitae tincidunt lacus. Etiam lacinia mi nunc. Phasellus id arcu euismod,
-				iaculis ex vitae, cursus lectus. Donec eu posuere leo. Sed odio dui, congue non ullamcorper
-				in, gravida a purus.
-			</p>
+			<ol class="list-inside list-decimal space-y-6 text-justify">
+				<li class="pl-2">
+					<strong>Registrace a skupina:</strong> Na webu si vytvoříte účet a založíte skupinu (např.
+					"Rodina"). Své blízké do ní pozvete jednoduše pomocí jejich e-mailu.
+				</li>
+				<li class="pl-2">
+					<strong>Poslání zprávy:</strong> Jakmile členové pozvánku přijmou, můžete začít psát. Stačí
+					poslat běžnou SMS na naše servisní číslo.
+				</li>
+				<li class="pl-2">
+					<strong>Okamžité doručení:</strong> Ding vaši zprávu automaticky přepošle všem ostatním ve
+					skupině. Ostatní členové uvidí vaše jméno a text zprávy přímo ve svých SMS zprávách.
+				</li>
+				<li class="pl-2">
+					<strong>Žádná aplikace:</strong> Pro psaní i přijímání zpráv nepotřebujete chytrý telefon
+					ani internet. Vše probíhá přes klasické SMS, které fungují na každém mobilu.
+				</li>
+				<li class="pl-2">
+					<strong>Férová cena:</strong> Platíte jen za zprávy, které sami odešlete. Za každého
+					člena, kterému Ding vaši zprávu doručí, se z vašeho kreditu odečtou 2 Kč.
+				</li>
+			</ol>
 		</div>
 	</div>
 </div>

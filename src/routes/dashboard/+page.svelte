@@ -44,7 +44,6 @@
 <div class="m-4 grid gap-4 md:grid-cols-2">
 	<div class="h-min border bg-white p-4">
 		{#if !data.user?.welcomeMessageSent}
-			<!-- STEP 1: WELCOME MESSAGE -->
 			<h2 class="mb-8 font-2 text-2xl font-semibold">Vytvořte si kontakt</h2>
 			<p class="text-justify">
 				Poslední krok, než budete moci začít využívat SMS skupiny, je ověření telefonního čísla a
@@ -63,9 +62,6 @@
 					submittingWelcome = true;
 					return async ({ update, result }) => {
 						await update();
-						// Only keep it "submitting" if it actually failed and we want to allow retry
-						// But for this security flow, even on failure we might want to disable it
-						// for a bit or rely on the server's welcomeMessageSent check.
 						if (result.type !== 'success') {
 							submittingWelcome = false;
 						}
@@ -76,7 +72,7 @@
 			>
 				<button
 					disabled={submittingWelcome}
-					class="h-12 w-full border bg-black font-2 font-semibold text-white transition-colors hover:cursor-pointer hover:bg-white hover:text-black disabled:cursor-not-allowed disabled:bg-gray-400"
+					class="h-12 w-full border bg-black font-2 font-semibold text-white transition-colors hover:cursor-pointer hover:bg-white hover:text-black disabled:cursor-not-allowed disabled:bg-gray-200"
 				>
 					{submittingWelcome ? 'Odesílám...' : 'Odeslat přivítací SMS'}
 				</button>
